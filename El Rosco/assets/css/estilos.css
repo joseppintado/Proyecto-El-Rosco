@@ -1,0 +1,865 @@
+/* Importamos Outfit de Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #f8fafc;
+    padding: 40px 20px;
+    position: relative;
+    overflow-x: hidden;
+}
+
+header {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 3.2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+main {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+}
+
+/* Botón flotante del ranking */
+.btn-ranking-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #38bdf8;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.btn-ranking-toggle:hover {
+    background: #38bdf8;
+    color: #0f172a;
+    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Pantallas y Contenedores (Glassmorphism) */
+#seccionUsuarios,
+#configuracionJuego,
+#contenedorJuego {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    transition: all 0.3s;
+}
+
+#contenedorJuego {
+    max-width: 1000px;
+}
+
+#seccionUsuarios h2,
+#configuracionJuego h3 {
+    margin-bottom: 25px;
+    font-size: 1.6rem;
+    color: #f1f5f9;
+    font-weight: 700;
+}
+
+/* Formularios */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+form input,
+#selectNivel,
+#inputRespuesta {
+    background: rgba(15, 23, 42, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: white;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.3s;
+}
+
+form input::placeholder {
+    color: #64748b;
+}
+
+form input:focus,
+#selectNivel:focus,
+#inputRespuesta:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+form button,
+#btnIniciarPartida,
+#btnEnviarRespuesta {
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    color: #0f172a;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+}
+
+form button:hover,
+#btnIniciarPartida:hover,
+#btnEnviarRespuesta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+    opacity: 0.95;
+}
+
+#btnToggleForm {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: color 0.2s;
+}
+
+#btnToggleForm:hover {
+    color: #cbd5e1;
+}
+
+/* Configuración de partida */
+.control-config {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.control-config label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.control-config select {
+    background: rgba(15, 23, 42, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 1rem;
+    color: white;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.3s;
+    width: 100%;
+    cursor: pointer;
+}
+
+.control-config select:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+#btnIniciarPartida {
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Zona General */
+.zona-general {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 25px;
+    width: 100%;
+    text-align: center;
+}
+
+.zona-general h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #38bdf8;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.general-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+.general-col {
+    flex: 1;
+    min-width: 200px;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 15px;
+    text-align: left;
+}
+
+.general-col h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.general-col p {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin-bottom: 8px;
+}
+
+.general-col p:last-child {
+    margin-bottom: 0;
+}
+
+.destacado {
+    font-weight: 700;
+    color: #ff9f1c;
+}
+
+.lista-ultimas-partidas {
+    max-height: 120px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+#indicadorTurno {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-top: 10px;
+}
+
+/* Tiempos de los jugadores en sus zonas */
+.tiempo-jugador {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #cbd5e1;
+    margin-bottom: 15px;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 8px 16px;
+    border-radius: 8px;
+    display: inline-block;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.timer-j1 {
+    color: #38bdf8;
+    font-weight: 800;
+}
+
+.timer-j2 {
+    color: #c084fc;
+    font-weight: 800;
+}
+
+#nombreJugadorActivo {
+    padding: 6px 16px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 700;
+}
+
+.nombre-jugador-1 {
+    background-color: #0284c7;
+    box-shadow: 0 0 15px rgba(2, 132, 199, 0.5);
+}
+
+.nombre-jugador-2 {
+    background-color: #7c3aed;
+    box-shadow: 0 0 15px rgba(124, 58, 237, 0.5);
+}
+
+/* Tableros de Jugadores */
+#tablerosJugadores {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin-top: 15px;
+}
+
+.panel-jugador {
+    width: 48%;
+    background: rgba(15, 23, 42, 0.4);
+    border: 3px solid transparent;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+.panel-jugador h3 {
+    margin-bottom: 5px;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+#panel-jugador1 h3 {
+    color: #38bdf8;
+}
+
+#panel-jugador2 h3 {
+    color: #c084fc;
+}
+
+.panel-jugador p {
+    font-weight: 600;
+    color: #94a3b8;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+.panel-jugador.jugador-activo {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+#panel-jugador1.jugador-activo {
+    border-color: #38bdf8;
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
+}
+
+#panel-jugador2.jugador-activo {
+    border-color: #c084fc;
+    box-shadow: 0 0 25px rgba(192, 132, 252, 0.25);
+}
+
+/* Rosco en cuadrícula */
+.rosco-jugador {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    justify-items: center;
+}
+
+.btn-letra {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-letra:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #38bdf8;
+}
+
+.btn-letra.acierto {
+    background-color: #10b981 !important;
+    border-color: #10b981 !important;
+    color: white !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    cursor: not-allowed;
+}
+
+.btn-letra.error {
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: white !important;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+    cursor: not-allowed;
+}
+
+/* Card de Definición */
+#zonaDefinicion {
+    width: 100%;
+    max-width: 650px;
+    margin-top: 15px;
+}
+
+.card-definicion {
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    border-left: 6px solid #ff9f1c;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.card-definicion p {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    color: #f1f5f9;
+}
+
+.btn-ayuda {
+    background: #475569;
+    color: #cbd5e1;
+    border: none;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-ayuda:hover {
+    background: #64748b;
+    color: white;
+}
+
+.ayuda-letras {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ff9f1c;
+    background: rgba(255, 159, 28, 0.1);
+    padding: 6px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 159, 28, 0.2);
+}
+
+#inputRespuesta {
+    width: 100%;
+    max-width: 320px;
+}
+
+#btnEnviarRespuesta {
+    width: 100%;
+    max-width: 200px;
+    padding: 12px;
+}
+
+/* Tabla de Ranking del Sidebar */
+.tabla-ranking {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tabla-ranking th,
+.tabla-ranking td {
+    padding: 14px 18px;
+    text-align: left;
+}
+
+.tabla-ranking th {
+    background: rgba(15, 23, 42, 0.8);
+    color: #94a3b8;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+}
+
+.tabla-ranking td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    font-size: 0.95rem;
+    color: #e2e8f0;
+}
+
+.tabla-ranking tr:last-child td {
+    border-bottom: none;
+}
+
+.tabla-ranking tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+#btnCargarRanking {
+    background: #334155;
+    color: #cbd5e1;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+#btnCargarRanking:hover {
+    background: #475569;
+    color: white;
+}
+
+/* Utilidades */
+.hidden {
+    display: none !important;
+}
+
+/* Animación pulsante para la letra activa */
+.btn-letra.letra-activa {
+    border-color: #ff9f1c !important;
+    background-color: rgba(255, 159, 28, 0.25) !important;
+    color: white !important;
+    font-weight: 900;
+    box-shadow: 0 0 20px rgba(255, 159, 28, 0.8) !important;
+    transform: scale(1.15);
+    animation: pulsar-letra 1.5s infinite ease-in-out;
+}
+
+@keyframes pulsar-letra {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(255, 159, 28, 0.5);
+    }
+
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 0 25px rgba(255, 159, 28, 0.9);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(255, 159, 28, 0.5);
+    }
+}
+
+/* Indicador de letra en definición */
+.letra-indicador {
+    font-size: 1.1rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.letra-resaltada {
+    font-size: 1.8rem;
+    color: #ff9f1c;
+    background: rgba(255, 159, 28, 0.1);
+    padding: 2px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 159, 28, 0.2);
+    margin-left: 8px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* Acciones en la tarjeta de definición */
+.def-acciones {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 450px;
+    margin-top: 10px;
+}
+
+.btn-confirmar {
+    flex: 1;
+    background: linear-gradient(90deg, #10b981, #059669);
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    transition: all 0.3s;
+}
+
+.btn-confirmar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.btn-ceder {
+    flex: 1;
+    background: #475569;
+    color: #f1f5f9;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-ceder:hover {
+    background: #64748b;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-abandonar {
+    background: #ef4444;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    margin: 15px auto 25px auto;
+    display: block;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.btn-abandonar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    opacity: 0.95;
+}
+
+/* Pantalla de Estadísticas Generales */
+.grid-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+    margin-bottom: 25px;
+    width: 100%;
+}
+
+.card-stat {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+.card-stat h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-stat h3 span {
+    font-size: 0.85rem;
+    color: #ff9f1c;
+    background: rgba(255, 159, 28, 0.1);
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 159, 28, 0.2);
+}
+
+.tabla-stats {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.tabla-stats th,
+.tabla-stats td {
+    padding: 10px 12px;
+    text-align: left;
+}
+
+.tabla-stats th {
+    color: #94a3b8;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-weight: 600;
+}
+
+.tabla-stats td {
+    color: #e2e8f0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.tabla-stats tr:last-child td {
+    border-bottom: none;
+}
+
+.pos-num {
+    font-weight: 700;
+    color: #ff9f1c;
+}
+
+/* Clases para desacoplamiento y separación de capas */
+.tiempo-critico {
+    color: #ef4444 !important;
+}
+
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.stats-header h2 {
+    margin: 0;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.btn-stats-volver {
+    position: static !important;
+}
+
+.card-finalizada {
+    border-left-color: #2ec4b6 !important;
+}
+
+.btn-volver-config {
+    margin-top: 15px !important;
+}
+
+.historial-vacio {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+.historial-lista {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.ganador-destacado {
+    color: #10b981;
+}
+
+.ganador-local {
+    color: #94a3b8;
+}
+
+.historial-item {
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 4px;
+}
+
+.stats-vacio {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    margin: 10px 0;
+}
+
+.tiempo-destacado {
+    color: #10b981;
+}
+
+.btn-cerrar-fin {
+    margin: 0 !important;
+    display: inline-block !important;
+}
+
+.btn-salir-config {
+    margin-top: 15px !important;
+    width: 100%;
+}
+
+/* Consistencia de botones en pantalla de selección de partida */
+#btnIniciarPartida,
+#btnSalirJuegoConfig {
+    width: 100% !important;
+    padding: 14px !important;
+    border-radius: 10px !important;
+    font-size: 1.1rem !important;
+    margin: 15px 0 0 0 !important;
+    display: block !important;
+}
+
+#btnIniciarPartida {
+    margin-top: 25px !important;
+}
+
+/* Consistencia de botones al finalizar/abandonar partida */
+#btnVolverAConfig,
+#btnSalirJuegoFin {
+    flex: 1 !important;
+    padding: 12px 20px !important;
+    font-size: 1.05rem !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    border: none !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    transition: all 0.3s ease !important;
+}
