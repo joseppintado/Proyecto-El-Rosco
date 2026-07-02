@@ -6,7 +6,7 @@ header('Content-Type: application/json; charset=utf-8');
 $conexion = conexion::crearConexion();
 
 // Helper to execute simple query and fetch all rows
-$getQueryResults = function($sql) use ($conexion) {
+$obtenerResultadosConsulta = function($sql) use ($conexion) {
     $result = $conexion->query($sql);
     $rows = [];
     if ($result) {
@@ -18,7 +18,7 @@ $getQueryResults = function($sql) use ($conexion) {
 };
 
 // 1. Ganadores General
-$winnersGeneral = $getQueryResults("
+$ganadoresGeneral = $obtenerResultadosConsulta("
     SELECT u.nombre_usuario, COUNT(gj.id_juego) AS victorias
     FROM usuarios u
     JOIN ganadores_juego gj ON u.id_usuario = gj.id_usuario
@@ -28,7 +28,7 @@ $winnersGeneral = $getQueryResults("
 ");
 
 // Ganadores por dificultad
-$getWinnersByDiff = function($nivel) use ($conexion) {
+$obtenerGanadoresPorDificultad = function($nivel) use ($conexion) {
     $sql = "SELECT u.nombre_usuario, COUNT(gj.id_juego) AS victorias
             FROM usuarios u
             JOIN ganadores_juego gj ON u.id_usuario = gj.id_usuario
@@ -49,12 +49,12 @@ $getWinnersByDiff = function($nivel) use ($conexion) {
     return $list;
 };
 
-$winnersBaja = $getWinnersByDiff('baja');
-$winnersMedia = $getWinnersByDiff('media');
-$winnersAlta = $getWinnersByDiff('alta');
+$ganadoresBaja = $obtenerGanadoresPorDificultad('baja');
+$ganadoresMedia = $obtenerGanadoresPorDificultad('media');
+$ganadoresAlta = $obtenerGanadoresPorDificultad('alta');
 
 // 2. Usuarios más rápidos
-$fastest = $getQueryResults("
+$masRapidos = $obtenerResultadosConsulta("
     SELECT u.nombre_usuario, MIN(gj.tiempo_usado) AS tiempo_minimo, j.nivel
     FROM usuarios u
     JOIN ganadores_juego gj ON u.id_usuario = gj.id_usuario
@@ -66,7 +66,7 @@ $fastest = $getQueryResults("
 ");
 
 // 3. Ranking general de partidas
-$rankingGeneral = $getQueryResults("
+$rankingGeneral = $obtenerResultadosConsulta("
     SELECT u.nombre_usuario, COUNT(gj.id_juego) AS victorias, ROUND(AVG(gj.tiempo_usado), 1) AS tiempo_promedio
     FROM usuarios u
     LEFT JOIN ganadores_juego gj ON u.id_usuario = gj.id_usuario
@@ -78,11 +78,11 @@ $conexion->close();
 
 echo json_encode([
     'exito' => true,
-    'winnersGeneral' => $winnersGeneral,
-    'winnersBaja' => $winnersBaja,
-    'winnersMedia' => $winnersMedia,
-    'winnersAlta' => $winnersAlta,
-    'fastest' => $fastest,
+    'ganadoresGeneral' => $ganadoresGeneral,
+    'ganadoresBaja' => $ganadoresBaja,
+    'ganadoresMedia' => $ganadoresMedia,
+    'ganadoresAlta' => $ganadoresAlta,
+    'masRapidos' => $masRapidos,
     'rankingGeneral' => $rankingGeneral
 ]);
 ?>

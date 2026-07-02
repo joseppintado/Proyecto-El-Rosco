@@ -44,7 +44,7 @@ main {
 }
 
 /* Botón flotante del ranking */
-.btn-ranking-toggle {
+.btn-alternar-ranking {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -63,11 +63,26 @@ main {
     font-family: inherit;
 }
 
-.btn-ranking-toggle:hover {
+.btn-alternar-ranking:hover {
     background: #38bdf8;
     color: #0f172a;
     box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
     transform: translateY(-2px);
+}
+
+/* Contenedor de botones en el encabezado */
+.botones-encabezado {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999;
+    display: flex;
+    gap: 10px;
+}
+
+/* Cuando el botón está dentro del contenedor botones-encabezado, se posiciona de forma estática */
+.botones-encabezado .btn-alternar-ranking {
+    position: static;
 }
 
 /* Pantallas y Contenedores (Glassmorphism) */
@@ -154,7 +169,7 @@ form button:hover,
     opacity: 0.95;
 }
 
-#btnToggleForm {
+#btnAlternarFormulario {
     background: none;
     border: none;
     color: #94a3b8;
@@ -165,12 +180,12 @@ form button:hover,
     transition: color 0.2s;
 }
 
-#btnToggleForm:hover {
+#btnAlternarFormulario:hover {
     color: #cbd5e1;
 }
 
 /* Configuración de partida */
-.control-config {
+.control-configuracion {
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -180,13 +195,13 @@ form button:hover,
     text-align: left;
 }
 
-.control-config label {
+.control-configuracion label {
     font-size: 0.95rem;
     font-weight: 600;
     color: #94a3b8;
 }
 
-.control-config select {
+.control-configuracion select {
     background: rgba(15, 23, 42, 0.6);
     border: 2px solid rgba(255, 255, 255, 0.1);
     padding: 12px 18px;
@@ -230,7 +245,7 @@ form button:hover,
     letter-spacing: 1px;
 }
 
-.general-grid {
+.general-cuadricula {
     display: flex;
     justify-content: space-between;
     align-items: stretch;
@@ -239,7 +254,7 @@ form button:hover,
     margin-bottom: 15px;
 }
 
-.general-col {
+.general-columna {
     flex: 1;
     min-width: 200px;
     background: rgba(30, 41, 59, 0.5);
@@ -249,7 +264,7 @@ form button:hover,
     text-align: left;
 }
 
-.general-col h4 {
+.general-columna h4 {
     font-size: 0.95rem;
     font-weight: 700;
     color: #f1f5f9;
@@ -301,12 +316,12 @@ form button:hover,
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.timer-j1 {
+.temporizador-j1 {
     color: #38bdf8;
     font-weight: 800;
 }
 
-.timer-j2 {
+.temporizador-j2 {
     color: #c084fc;
     font-weight: 800;
 }
@@ -499,7 +514,7 @@ form button:hover,
 }
 
 /* Tabla de Ranking del Sidebar */
-.tabla-ranking {
+.tabla-clasificacion {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
@@ -509,13 +524,13 @@ form button:hover,
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.tabla-ranking th,
-.tabla-ranking td {
+.tabla-clasificacion th,
+.tabla-clasificacion td {
     padding: 14px 18px;
     text-align: left;
 }
 
-.tabla-ranking th {
+.tabla-clasificacion th {
     background: rgba(15, 23, 42, 0.8);
     color: #94a3b8;
     font-weight: 700;
@@ -523,17 +538,17 @@ form button:hover,
     border-bottom: 2px solid rgba(255, 255, 255, 0.05);
 }
 
-.tabla-ranking td {
+.tabla-clasificacion td {
     border-bottom: 1px solid rgba(255, 255, 255, 0.03);
     font-size: 0.95rem;
     color: #e2e8f0;
 }
 
-.tabla-ranking tr:last-child td {
+.tabla-clasificacion tr:last-child td {
     border-bottom: none;
 }
 
-.tabla-ranking tr:hover {
+.tabla-clasificacion tr:hover {
     background-color: rgba(255, 255, 255, 0.02);
 }
 
@@ -556,7 +571,7 @@ form button:hover,
 }
 
 /* Utilidades */
-.hidden {
+.oculto {
     display: none !important;
 }
 
@@ -610,7 +625,7 @@ form button:hover,
 }
 
 /* Acciones en la tarjeta de definición */
-.def-acciones {
+.definicion-acciones {
     display: flex;
     justify-content: center;
     gap: 15px;
@@ -680,7 +695,7 @@ form button:hover,
 }
 
 /* Pantalla de Estadísticas Generales */
-.grid-stats {
+.cuadricula-estadisticas {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 25px;
@@ -688,7 +703,7 @@ form button:hover,
     width: 100%;
 }
 
-.card-stat {
+.tarjeta-estadistica {
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -698,7 +713,7 @@ form button:hover,
     text-align: left;
 }
 
-.card-stat h3 {
+.tarjeta-estadistica h3 {
     font-size: 1.25rem;
     font-weight: 700;
     color: #f8fafc;
@@ -711,7 +726,7 @@ form button:hover,
     align-items: center;
 }
 
-.card-stat h3 span {
+.tarjeta-estadistica h3 span {
     font-size: 0.85rem;
     color: #ff9f1c;
     background: rgba(255, 159, 28, 0.1);
@@ -720,34 +735,34 @@ form button:hover,
     border: 1px solid rgba(255, 159, 28, 0.2);
 }
 
-.tabla-stats {
+.tabla-estadisticas {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.95rem;
 }
 
-.tabla-stats th,
-.tabla-stats td {
+.tabla-estadisticas th,
+.tabla-estadisticas td {
     padding: 10px 12px;
     text-align: left;
 }
 
-.tabla-stats th {
+.tabla-estadisticas th {
     color: #94a3b8;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     font-weight: 600;
 }
 
-.tabla-stats td {
+.tabla-estadisticas td {
     color: #e2e8f0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.02);
 }
 
-.tabla-stats tr:last-child td {
+.tabla-estadisticas tr:last-child td {
     border-bottom: none;
 }
 
-.pos-num {
+.posicion-numero {
     font-weight: 700;
     color: #ff9f1c;
 }
@@ -757,7 +772,7 @@ form button:hover,
     color: #ef4444 !important;
 }
 
-.stats-header {
+.cabecera-estadisticas {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -766,14 +781,14 @@ form button:hover,
     margin-bottom: 25px;
 }
 
-.stats-header h2 {
+.cabecera-estadisticas h2 {
     margin: 0;
     background: linear-gradient(90deg, #38bdf8, #818cf8);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.btn-stats-volver {
+.btn-volver-estadisticas {
     position: static !important;
 }
 
@@ -813,7 +828,7 @@ form button:hover,
     padding-bottom: 4px;
 }
 
-.stats-vacio {
+.estadisticas-vacio {
     color: #94a3b8;
     font-size: 0.9rem;
     margin: 10px 0;
@@ -828,14 +843,14 @@ form button:hover,
     display: inline-block !important;
 }
 
-.btn-salir-config {
+.btn-salir-configuracion {
     margin-top: 15px !important;
     width: 100%;
 }
 
 /* Consistencia de botones en pantalla de selección de partida */
 #btnIniciarPartida,
-#btnSalirJuegoConfig {
+#btnSalirJuegoConfiguracion {
     width: 100% !important;
     padding: 14px !important;
     border-radius: 10px !important;

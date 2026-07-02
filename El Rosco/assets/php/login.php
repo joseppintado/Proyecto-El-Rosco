@@ -6,9 +6,9 @@ header('Content-Type: application/json; charset=utf-8');
 
 if($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombre = $_POST['nombreUsuario'];
-    $password = $_POST['password'];
+    $contrasena = $_POST['contrasena'];
 
-    $usuario = Usuario::iniciarSesion($nombre, $password);
+    $usuario = Usuario::iniciarSesion($nombre, $contrasena);
 
     if($usuario){
         if (!isset($_SESSION['usuario_j1'])) {
@@ -24,7 +24,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($_SESSION['usuario_j1']->getNombreUsuario() === $usuario->getNombreUsuario()) {
                 echo json_encode([
                     'exito' => false,
-                    'message' => 'El Jugador 2 no puede ser el mismo usuario que el Jugador 1'
+                    'mensaje' => 'El Jugador 2 no puede ser el mismo usuario que el Jugador 1'
                 ]);
             } else {
                 $_SESSION['usuario_j2'] = $usuario;
@@ -38,13 +38,13 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             echo json_encode([
                 'exito' => false,
-                'message' => 'Ya se encuentran dos jugadores logueados'
+                'mensaje' => 'Ya se encuentran dos jugadores logueados'
             ]);
         }
     }else{
         echo json_encode([
             'exito' => false,
-            'message' => 'Nombre de usuario o contraseña incorrectos'
+            'mensaje' => 'Nombre de usuario o contraseña incorrectos'
         ]);
     }
 }

@@ -2,32 +2,74 @@ function cargarEstadisticasGenerales() {
     realizarPeticion('GET', 'El Rosco/assets/php/obtener_estadisticas.php', 't=' + new Date().getTime(), function (respuesta) {
         if (respuesta.exito) {
             // Renderizar Más Ganadores General
-            renderStatsTable('statsWinnersGeneral', respuesta.winnersGeneral, 'victorias', 'victoria', 'victorias');
+            renderizarTablaEstadisticas('statsGanadoresGeneral', respuesta.ganadoresGeneral, 'victorias', 'victoria', 'victorias');
 
-            // Renderizar por dificultad
-            renderStatsTable('statsWinnersBaja', respuesta.winnersBaja, 'victorias', 'victoria', 'victorias');
-            renderStatsTable('statsWinnersMedia', respuesta.winnersMedia, 'victorias', 'victoria', 'victorias');
-            renderStatsTable('statsWinnersAlta', respuesta.winnersAlta, 'victorias', 'victoria', 'victorias');
+            // Renderizar por dificultad (combinando las tres en una sola tabla)
+            renderizarTablaPorDificultad('statsGanadoresPorDificultad', respuesta.ganadoresBaja, respuesta.ganadoresMedia, respuesta.ganadoresAlta);
 
             // Renderizar Más Rápidos
-            renderStatsTableFastest('statsFastest', respuesta.fastest);
+            renderizarTablaMasRapidos('statsMasRapidos', respuesta.masRapidos);
 
             // Renderizar Ranking General
-            renderStatsTableRanking('statsRankingGeneral', respuesta.rankingGeneral);
+            renderizarTablaRanking('statsClasificacionGeneral', respuesta.rankingGeneral);
         } else {
-            console.error("Error al cargar estadísticas:", respuesta.message);
+            console.error("Error al cargar estadísticas:", respuesta.mensaje);
         }
     });
 }
 
-function renderStatsTable(containerId, data, valField, singularLabel, pluralLabel) {
-    let container = document.getElementById(containerId);
-    if (!container) return;
-    if (!data || data.length === 0) {
-        container.innerHTML = "<p class='stats-vacio'>No hay registros aún.</p>";
+function renderizarTablaPorDificultad(idContenedor, ganadoresBaja, ganadoresMedia, ganadoresAlta) {
+    let contenedor = document.getElementById(idContenedor);
+    if (!contenedor) return;
+
+    let tieneDatos = (ganadoresBaja && ganadoresBaja.length > 0) || 
+                      (ganadoresMedia && ganadoresMedia.length > 0) || 
+                      (ganadoresAlta && ganadoresAlta.length > 0);
+
+    if (!tieneDatos) {
+        contenedor.innerHTML = "<p class='estadisticas-vacio'>No hay registros aún.</p>";
         return;
     }
-    let html = `<table class="tabla-stats">
+
+    let html = `<table class="tabla-estadisticas">
+        <thead>
+            <tr>
+                <th>Dificultad</th>
+                <th>Usuario</th>
+                <th>Registro</th>
+            </tr>
+        </thead>
+        <tbody>`;
+
+    let agregarFilas = (datos, dificultadEtiqueta) => {
+        if (!datos || datos.length === 0) return;
+        datos.forEach((fila) => {
+            let cantidad = fila.victorias;
+            let etiqueta = cantidad == 1 ? 'victoria' : 'victorias';
+            html += `<tr>
+                <td><span class="destacado">${dificultadEtiqueta}</span></td>
+                <td>${fila.nombre_usuario}</td>
+                <td><strong>${cantidad}</strong> ${etiqueta}</td>
+            </tr>`;
+        });
+    };
+
+    agregarFilas(ganadoresBaja, 'Baja');
+    agregarFilas(ganadoresMedia, 'Media');
+    agregarFilas(ganadoresAlta, 'Alta');
+
+    html += `</tbody></table>`;
+    contenedor.innerHTML = html;
+}
+
+function renderizarTablaEstadisticas(idContenedor, datos, campoValor, etiquetaSingular, etiquetaPlural) {
+    let contenedor = document.getElementById(idContenedor);
+    if (!contenedor) return;
+    if (!datos || datos.length === 0) {
+        contenedor.innerHTML = "<p class='estadisticas-vacio'>No hay registros aún.</p>";
+        return;
+    }
+    let html = `<table class="tabla-estadisticas">
         <thead>
             <tr>
                 <th>#</th>
@@ -36,27 +78,27 @@ function renderStatsTable(containerId, data, valField, singularLabel, pluralLabe
             </tr>
         </thead>
         <tbody>`;
-    data.forEach((row, i) => {
-        let count = row[valField];
-        let label = count == 1 ? singularLabel : pluralLabel;
+    datos.forEach((fila, i) => {
+        let cantidad = fila[campoValor];
+        let etiqueta = cantidad == 1 ? etiquetaSingular : etiquetaPlural;
         html += `<tr>
-            <td class="pos-num">#${i + 1}</td>
-            <td>${row.nombre_usuario}</td>
-            <td><strong>${count}</strong> ${label}</td>
+            <td class="posicion-numero">#${i + 1}</td>
+            <td>${fila.nombre_usuario}</td>
+            <td><strong>${cantidad}</strong> ${etiqueta}</td>
         </tr>`;
     });
     html += `</tbody></table>`;
-    container.innerHTML = html;
+    contenedor.innerHTML = html;
 }
 
-function renderStatsTableFastest(containerId, data) {
-    let container = document.getElementById(containerId);
-    if (!container) return;
-    if (!data || data.length === 0) {
-        container.innerHTML = "<p class='stats-vacio'>No hay registros aún.</p>";
+function renderizarTablaMasRapidos(idContenedor, datos) {
+    let contenedor = document.getElementById(idContenedor);
+    if (!contenedor) return;
+    if (!datos || datos.length === 0) {
+        contenedor.innerHTML = "<p class='estadisticas-vacio'>No hay registros aún.</p>";
         return;
     }
-    let html = `<table class="tabla-stats">
+    let html = `<table class="tabla-estadisticas">
         <thead>
             <tr>
                 <th>#</th>
@@ -66,26 +108,26 @@ function renderStatsTableFastest(containerId, data) {
             </tr>
         </thead>
         <tbody>`;
-    data.forEach((row, i) => {
+    datos.forEach((fila, i) => {
         html += `<tr>
-            <td class="pos-num">#${i + 1}</td>
-            <td>${row.nombre_usuario}</td>
-            <td><strong class="tiempo-destacado">${row.tiempo_minimo}s</strong></td>
-            <td><span class="destacado">${row.nivel.toUpperCase()}</span></td>
+            <td class="posicion-numero">#${i + 1}</td>
+            <td>${fila.nombre_usuario}</td>
+            <td><strong class="tiempo-destacado">${fila.tiempo_minimo}s</strong></td>
+            <td><span class="destacado">${fila.nivel.toUpperCase()}</span></td>
         </tr>`;
     });
     html += `</tbody></table>`;
-    container.innerHTML = html;
+    contenedor.innerHTML = html;
 }
 
-function renderStatsTableRanking(containerId, data) {
-    let container = document.getElementById(containerId);
-    if (!container) return;
-    if (!data || data.length === 0) {
-        container.innerHTML = "<p class='stats-vacio'>No hay registros aún.</p>";
+function renderizarTablaRanking(idContenedor, datos) {
+    let contenedor = document.getElementById(idContenedor);
+    if (!contenedor) return;
+    if (!datos || datos.length === 0) {
+        contenedor.innerHTML = "<p class='estadisticas-vacio'>No hay registros aún.</p>";
         return;
     }
-    let html = `<table class="tabla-stats">
+    let html = `<table class="tabla-estadisticas">
         <thead>
             <tr>
                 <th>#</th>
@@ -95,15 +137,15 @@ function renderStatsTableRanking(containerId, data) {
             </tr>
         </thead>
         <tbody>`;
-    data.forEach((row, i) => {
-        let promText = row.tiempo_promedio ? `${row.tiempo_promedio}s` : '-';
+    datos.forEach((fila, i) => {
+        let textoPromedio = fila.tiempo_promedio ? `${fila.tiempo_promedio}s` : '-';
         html += `<tr>
-            <td class="pos-num">#${i + 1}</td>
-            <td>${row.nombre_usuario}</td>
-            <td><strong>${row.victorias}</strong> victorias</td>
-            <td>${promText}</td>
+            <td class="posicion-numero">#${i + 1}</td>
+            <td>${fila.nombre_usuario}</td>
+            <td><strong>${fila.victorias}</strong> victorias</td>
+            <td>${textoPromedio}</td>
         </tr>`;
     });
     html += `</tbody></table>`;
-    container.innerHTML = html;
+    contenedor.innerHTML = html;
 }

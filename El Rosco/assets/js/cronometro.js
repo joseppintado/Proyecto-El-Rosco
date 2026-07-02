@@ -41,7 +41,7 @@ function iniciarCronometro() {
     if (segundosConfigurados === 0) {
         let contenedorCrono = document.getElementById('contenedorCronometro');
         if (contenedorCrono) {
-            contenedorCrono.classList.add('hidden');
+            contenedorCrono.classList.add('oculto');
         }
         intervaloCronometro = setInterval(() => {
             tiempoUsado[turnoJugador]++;
@@ -60,9 +60,9 @@ function iniciarCronometro() {
             if (tiempoRestante[turnoJugador] <= 0) {
                 alert(`¡Se acabó el tiempo para el Jugador ${turnoJugador}!`);
 
-                let activeIdx = indiceLetraActual[turnoJugador];
-                let activeBtn = document.querySelector(`.pos-${turnoJugador}-${activeIdx}`);
-                if (activeBtn) activeBtn.classList.remove('letra-activa');
+                let indiceActivo = indiceLetraActual[turnoJugador];
+                let botonActivo = document.querySelector(`.pos-${turnoJugador}-${indiceActivo}`);
+                if (botonActivo) botonActivo.classList.remove('letra-activa');
 
                 document.getElementById('zonaDefinicion').innerHTML = "";
 

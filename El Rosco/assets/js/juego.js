@@ -11,7 +11,7 @@ let palabrasContestadas = {
 let palabrasJuego = [];
 let indiceLetraActual = { 1: 0, 2: 0 };
 let tiempoUsado = { 1: 0, 2: 0 };
-let pantallaPreviaStats = null;
+let pantallaPreviaEstadisticas = null;
 let nombreJ1 = "Jugador 1";
 let nombreJ2 = "Jugador 2";
 const abecedario = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('');
@@ -34,50 +34,50 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Enlazar botones de estadísticas generales
-    const btnStats = document.getElementById('btnVerEstadisticasGenerales');
-    if (btnStats) {
-        btnStats.addEventListener('click', () => {
-            let sStats = document.getElementById('seccionEstadisticasGenerales');
-            if (sStats && !sStats.classList.contains('hidden')) {
+    const btnEstadisticas = document.getElementById('btnVerEstadisticasGenerales');
+    if (btnEstadisticas) {
+        btnEstadisticas.addEventListener('click', () => {
+            let seccionEstadisticas = document.getElementById('seccionEstadisticasGenerales');
+            if (seccionEstadisticas && !seccionEstadisticas.classList.contains('oculto')) {
                 return; // Si ya está visible, no hacer nada para evitar sobreescribir la pantalla previa
             }
 
-            // Encontrar cuál es la pantalla visible antes de ocultar (solo si pantallaPreviaStats no está ya establecida)
-            if (!pantallaPreviaStats) {
-                let sUsuarios = document.getElementById('seccionUsuarios');
-                let sConfig = document.getElementById('configuracionJuego');
-                let sJuego = document.getElementById('contenedorJuego');
+            // Encontrar cuál es la pantalla visible antes de ocultar (solo si pantallaPreviaEstadisticas no está ya establecida)
+            if (!pantallaPreviaEstadisticas) {
+                let seccionUsuarios = document.getElementById('seccionUsuarios');
+                let seccionConfiguracion = document.getElementById('configuracionJuego');
+                let seccionJuego = document.getElementById('contenedorJuego');
 
-                if (!sUsuarios.classList.contains('hidden')) {
-                    pantallaPreviaStats = 'seccionUsuarios';
-                } else if (!sConfig.classList.contains('hidden')) {
-                    pantallaPreviaStats = 'configuracionJuego';
-                } else if (!sJuego.classList.contains('hidden')) {
-                    pantallaPreviaStats = 'contenedorJuego';
+                if (!seccionUsuarios.classList.contains('oculto')) {
+                    pantallaPreviaEstadisticas = 'seccionUsuarios';
+                } else if (!seccionConfiguracion.classList.contains('oculto')) {
+                    pantallaPreviaEstadisticas = 'configuracionJuego';
+                } else if (!seccionJuego.classList.contains('oculto')) {
+                    pantallaPreviaEstadisticas = 'contenedorJuego';
                 } else {
-                    pantallaPreviaStats = 'seccionUsuarios';
+                    pantallaPreviaEstadisticas = 'seccionUsuarios';
                 }
             }
 
-            document.getElementById('seccionUsuarios').classList.add('hidden');
-            document.getElementById('configuracionJuego').classList.add('hidden');
-            document.getElementById('contenedorJuego').classList.add('hidden');
+            document.getElementById('seccionUsuarios').classList.add('oculto');
+            document.getElementById('configuracionJuego').classList.add('oculto');
+            document.getElementById('contenedorJuego').classList.add('oculto');
 
             // Mostrar pantalla de estadísticas generales
-            sStats.classList.remove('hidden');
+            seccionEstadisticas.classList.remove('oculto');
             cargarEstadisticasGenerales();
         });
     }
 
-    const btnVolverJuegoStats = document.getElementById('btnVolverAlJuegoDesdeStats');
-    if (btnVolverJuegoStats) {
-        btnVolverJuegoStats.addEventListener('click', () => {
-            document.getElementById('seccionEstadisticasGenerales').classList.add('hidden');
-            if (pantallaPreviaStats) {
-                document.getElementById(pantallaPreviaStats).classList.remove('hidden');
-                pantallaPreviaStats = null; // Restablecer para la próxima vez
+    const btnVolverJuegoEstadisticas = document.getElementById('btnVolverAlJuegoDesdeEstadisticas');
+    if (btnVolverJuegoEstadisticas) {
+        btnVolverJuegoEstadisticas.addEventListener('click', () => {
+            document.getElementById('seccionEstadisticasGenerales').classList.add('oculto');
+            if (pantallaPreviaEstadisticas) {
+                document.getElementById(pantallaPreviaEstadisticas).classList.remove('oculto');
+                pantallaPreviaEstadisticas = null; // Restablecer para la próxima vez
             } else {
-                document.getElementById('seccionUsuarios').classList.remove('hidden');
+                document.getElementById('seccionUsuarios').classList.remove('oculto');
             }
         });
     }
@@ -85,9 +85,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cargar el historial inicial
     cargarHistorialPartidas();
 
-    const btnSalirConfig = document.getElementById('btnSalirJuegoConfig');
-    if (btnSalirConfig) {
-        btnSalirConfig.addEventListener('click', salirDelJuego);
+    const btnSalirConfiguracion = document.getElementById('btnSalirJuegoConfiguracion');
+    if (btnSalirConfiguracion) {
+        btnSalirConfiguracion.addEventListener('click', salirDelJuego);
     }
 });
 
@@ -95,15 +95,15 @@ function salirDelJuego() {
     realizarPeticion('POST', 'El Rosco/assets/php/logout.php', '', function (respuesta) {
         if (respuesta.exito) {
             // Limpiar campos de login
-            let userLogin = document.getElementById('loginUser');
-            let passLogin = document.getElementById('loginPass');
-            if (userLogin) userLogin.value = '';
-            if (passLogin) passLogin.value = '';
+            let usuarioInicioSesion = document.getElementById('usuarioInicioSesion');
+            let claveInicioSesion = document.getElementById('claveInicioSesion');
+            if (usuarioInicioSesion) usuarioInicioSesion.value = '';
+            if (claveInicioSesion) claveInicioSesion.value = '';
 
             // Ocultar pantallas y mostrar login
-            document.getElementById('contenedorJuego').classList.add('hidden');
-            document.getElementById('configuracionJuego').classList.add('hidden');
-            document.getElementById('seccionUsuarios').classList.remove('hidden');
+            document.getElementById('contenedorJuego').classList.add('oculto');
+            document.getElementById('configuracionJuego').classList.add('oculto');
+            document.getElementById('seccionUsuarios').classList.remove('oculto');
             document.getElementById('zonaDefinicion').innerHTML = "";
         } else {
             alert("Error al salir del juego.");
@@ -141,18 +141,18 @@ function iniciarNuevaPartida() {
             turnoJugador = respuesta.jugadorInicial || 1;
 
             // Actualizar etiquetas en la UI
-            let lblJ1 = document.getElementById('label-jugador1');
-            let lblJ2 = document.getElementById('label-jugador2');
-            if (lblJ1) lblJ1.textContent = nombreJ1;
-            if (lblJ2) lblJ2.textContent = nombreJ2;
+            let etiquetaJ1 = document.getElementById('etiqueta-jugador1');
+            let etiquetaJ2 = document.getElementById('etiqueta-jugador2');
+            if (etiquetaJ1) etiquetaJ1.textContent = nombreJ1;
+            if (etiquetaJ2) etiquetaJ2.textContent = nombreJ2;
 
             // Ocultamos la Pantalla 2 (Configuración) y mostramos Pantalla 3 (Juego Activo)
-            document.getElementById('configuracionJuego').classList.add('hidden');
-            document.getElementById('contenedorJuego').classList.remove('hidden');
+            document.getElementById('configuracionJuego').classList.add('oculto');
+            document.getElementById('contenedorJuego').classList.remove('oculto');
 
             cargarPalabrasDelRosco();
         } else {
-            alert("Error al iniciar la partida: " + respuesta.message);
+            alert("Error al iniciar la partida: " + respuesta.mensaje);
         }
     });
 }
@@ -173,22 +173,22 @@ function iniciarTablero(listaPalabras) {
     tiempoRestante = { 1: segundosConfigurados, 2: segundosConfigurados };
 
     // Mostrar el botón de abandonar
-    let btnAb = document.getElementById('btnAbandonar');
-    if (btnAb) {
-        btnAb.classList.remove('hidden');
+    let btnAbandonar = document.getElementById('btnAbandonar');
+    if (btnAbandonar) {
+        btnAbandonar.classList.remove('oculto');
     }
 
     // Cargar características en la Zona General
     let selectNivel = document.getElementById('selectNivel');
     let selectAyuda = document.getElementById('selectAyuda');
 
-    let nivelText = selectNivel ? selectNivel.value.toUpperCase() : "MEDIA";
-    let tiempoText = segundosConfigurados === 0 ? "Sin límite" : `${segundosConfigurados}s`;
-    let ayudaText = selectAyuda ? (selectAyuda.value === 'si' ? "Habilitada" : "Inhabilitada") : "Habilitada";
+    let textoNivel = selectNivel ? selectNivel.value.toUpperCase() : "MEDIA";
+    let textoTiempo = segundosConfigurados === 0 ? "Sin límite" : `${segundosConfigurados}s`;
+    let textoAyuda = selectAyuda ? (selectAyuda.value === 'si' ? "Habilitada" : "Inhabilitada") : "Habilitada";
 
-    document.getElementById('generalDificultad').textContent = nivelText;
-    document.getElementById('generalDuracion').textContent = tiempoText;
-    document.getElementById('generalAyuda').textContent = ayudaText;
+    document.getElementById('generalDificultad').textContent = textoNivel;
+    document.getElementById('generalDuracion').textContent = textoTiempo;
+    document.getElementById('generalAyuda').textContent = textoAyuda;
 
     // Cargar historial de partidas
     cargarHistorialPartidas();
@@ -265,18 +265,18 @@ function presentarDefinicionActiva() {
     }
 
     // Verificar si el jugador del turno tiene letras pendientes, de lo contrario buscar en forma circular
-    let idx = indiceLetraActual[turnoJugador];
-    let found = false;
+    let indice = indiceLetraActual[turnoJugador];
+    let encontrado = false;
     for (let i = 0; i < 27; i++) {
-        let checkIdx = (idx + i) % 27;
-        if (!palabrasContestadas[turnoJugador][checkIdx]) {
-            indiceLetraActual[turnoJugador] = checkIdx;
-            found = true;
+        let indiceComprobar = (indice + i) % 27;
+        if (!palabrasContestadas[turnoJugador][indiceComprobar]) {
+            indiceLetraActual[turnoJugador] = indiceComprobar;
+            encontrado = true;
             break;
         }
     }
 
-    if (!found) {
+    if (!encontrado) {
         let otroJugador = (turnoJugador === 1) ? 2 : 1;
         turnoJugador = otroJugador;
         actualizarVisualTurno();
@@ -285,24 +285,24 @@ function presentarDefinicionActiva() {
     }
 
     // Resaltar la letra activa actual
-    let activeIdx = indiceLetraActual[turnoJugador];
-    let activeBtn = document.querySelector(`.pos-${turnoJugador}-${activeIdx}`);
-    if (activeBtn) {
-        activeBtn.classList.add('letra-activa');
+    let indiceActivo = indiceLetraActual[turnoJugador];
+    let botonActivo = document.querySelector(`.pos-${turnoJugador}-${indiceActivo}`);
+    if (botonActivo) {
+        botonActivo.classList.add('letra-activa');
     }
 
     // Cargar la definición en la card
-    let offset = (turnoJugador === 1) ? 0 : 27;
-    let palabra = palabrasJuego[activeIdx + offset];
+    let desplazamiento = (turnoJugador === 1) ? 0 : 27;
+    let palabra = palabrasJuego[indiceActivo + desplazamiento];
 
-    mostrarDefinicion(palabra, activeIdx, turnoJugador);
+    mostrarDefinicion(palabra, indiceActivo, turnoJugador);
 }
 
 function cederTurno() {
-    let activeIdx = indiceLetraActual[turnoJugador];
-    let activeBtn = document.querySelector(`.pos-${turnoJugador}-${activeIdx}`);
-    if (activeBtn) {
-        activeBtn.classList.remove('letra-activa');
+    let indiceActivo = indiceLetraActual[turnoJugador];
+    let botonActivo = document.querySelector(`.pos-${turnoJugador}-${indiceActivo}`);
+    if (botonActivo) {
+        botonActivo.classList.remove('letra-activa');
     }
 
     // Cambiar de turno si el otro jugador tiene letras pendientes
@@ -320,8 +320,6 @@ function cederTurno() {
     actualizarVisualTurno();
     presentarDefinicionActiva();
 }
-
-
 
 function actualizarVisualTurno() {
     let panelJ1 = document.getElementById('panel-jugador1');
@@ -346,7 +344,7 @@ function mostrarDefinicion(palabra, indexRelativo, numJugador) {
         return;
     }
 
-    let zonaDef = document.getElementById('zonaDefinicion');
+    let zonaDefinicion = document.getElementById('zonaDefinicion');
 
     let selectAyuda = document.getElementById('selectAyuda');
     let ayudaHabilitada = selectAyuda ? selectAyuda.value === 'si' : true;
@@ -354,25 +352,25 @@ function mostrarDefinicion(palabra, indexRelativo, numJugador) {
         ? `<div class="ayuda-letras">Cantidad de letras: ${palabra.cantidad_letras}</div>`
         : ``;
 
-    zonaDef.innerHTML = `
+    zonaDefinicion.innerHTML = `
         <div class="card-definicion">
             <h4 class="letra-indicador">Jugando letra: <span class="letra-resaltada">${abecedario[indexRelativo]}</span></h4>
             <p><strong>Definición:</strong> ${palabra.definicion}</p>
             ${ayudaHtml}
             <input type="text" id="inputRespuesta" placeholder="Tu respuesta..." autocomplete="off">
-            <div class="def-acciones">
+            <div class="definicion-acciones">
                 <button id="btnEnviarRespuesta" class="btn-confirmar">Confirmar</button>
                 <button id="btnCederTurno" class="btn-ceder">Ceder Turno</button>
             </div>
         </div>
     `;
 
-    const input = document.getElementById('inputRespuesta');
-    input.focus();
+    const campoRespuesta = document.getElementById('inputRespuesta');
+    campoRespuesta.focus();
 
     // Confirmar respuesta con botón
     document.getElementById('btnEnviarRespuesta').onclick = function () {
-        let respuesta = input.value;
+        let respuesta = campoRespuesta.value;
         enviarRespuesta(idPartidaActual, palabra.id_palabra, respuesta, indexRelativo, numJugador);
     };
 
@@ -382,9 +380,9 @@ function mostrarDefinicion(palabra, indexRelativo, numJugador) {
     };
 
     // Confirmar respuesta con tecla Enter
-    input.addEventListener('keypress', (e) => {
+    campoRespuesta.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            let respuesta = input.value;
+            let respuesta = campoRespuesta.value;
             enviarRespuesta(idPartidaActual, palabra.id_palabra, respuesta, indexRelativo, numJugador);
         }
     });
@@ -439,7 +437,7 @@ function enviarRespuesta(idJuego, idPalabra, respuesta, indexRelativo, numJugado
             actualizarVisualTurno();
             presentarDefinicionActiva();
         } else {
-            alert("Error: " + resultado.message);
+            alert("Error: " + resultado.mensaje);
         }
     });
 }
@@ -454,9 +452,9 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
     clearInterval(intervaloCronometro);
 
     // Ocultar el botón de abandonar al finalizar
-    let btnAb = document.getElementById('btnAbandonar');
-    if (btnAb) {
-        btnAb.classList.add('hidden');
+    let btnAbandonar = document.getElementById('btnAbandonar');
+    if (btnAbandonar) {
+        btnAbandonar.classList.add('oculto');
     }
 
     document.querySelectorAll('.btn-letra').forEach(b => {
@@ -468,9 +466,9 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
 
     if (ganadorForzado !== null) {
         ganador = ganadorForzado;
-        let perdedorName = (ganador === 1) ? nombreJ2 : nombreJ1;
-        let ganadorName = (ganador === 1) ? nombreJ1 : nombreJ2;
-        mensajeFinal = `¡Fin de la partida! ${perdedorName} ha abandonado. Ha ganado ${ganadorName}.`;
+        let nombrePerdedor = (ganador === 1) ? nombreJ2 : nombreJ1;
+        let nombreGanador = (ganador === 1) ? nombreJ1 : nombreJ2;
+        mensajeFinal = `¡Fin de la partida! ${nombrePerdedor} ha abandonado. Ha ganado ${nombreGanador}.`;
     } else {
         if (aciertos[1] > aciertos[2]) {
             ganador = 1;
@@ -507,7 +505,7 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
                 console.log("Ganador registrado correctamente");
                 cargarHistorialPartidas();
             } else {
-                console.error("Error al registrar ganador:", respuesta.message);
+                console.error("Error al registrar ganador:", respuesta.mensaje);
             }
         });
     } else {
@@ -518,16 +516,16 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
         <div class="card-definicion card-finalizada">
             <h3>Partida Finalizada</h3>
             <p>${mensajeFinal}</p>
-            <div class="def-acciones">
-                <button id="btnVolverAConfig" class="btn-ayuda btn-volver-config">Jugar otra partida</button>
+            <div class="definicion-acciones">
+                <button id="btnVolverAConfiguracion" class="btn-ayuda btn-volver-config">Jugar otra partida</button>
                 <button id="btnSalirJuegoFin" class="btn-abandonar btn-cerrar-fin">Salir del juego</button>
             </div>
         </div>
     `;
 
-    document.getElementById('btnVolverAConfig').onclick = function () {
-        document.getElementById('contenedorJuego').classList.add('hidden');
-        document.getElementById('configuracionJuego').classList.remove('hidden');
+    document.getElementById('btnVolverAConfiguracion').onclick = function () {
+        document.getElementById('contenedorJuego').classList.add('oculto');
+        document.getElementById('configuracionJuego').classList.remove('oculto');
         document.getElementById('zonaDefinicion').innerHTML = "";
     };
 
@@ -564,5 +562,3 @@ function cargarHistorialPartidas() {
         }
     });
 }
-
-

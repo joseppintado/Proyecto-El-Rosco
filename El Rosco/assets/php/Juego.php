@@ -1,23 +1,23 @@
 <?php
 require_once __DIR__ . '/conexion.php';
 class Juego {
-   public static function crearPartida($fechaInicio, $tamañoTablero, $nivel = 'media', $idJ1 = null, $idJ2 = null){
+   public static function crearPartida($fechaInicio, $tamanoTablero, $nivel = 'media', $idJ1 = null, $idJ2 = null){
       $conexion = conexion::crearConexion();
 
       $sql = "INSERT INTO juegos (fecha_inicio, tamano_tablero, nivel) VALUES (?,?,?)";
       $stmt = $conexion->prepare($sql);
-      $stmt->bind_param("sis", $fechaInicio, $tamañoTablero, $nivel);
+      $stmt->bind_param("sis", $fechaInicio, $tamanoTablero, $nivel);
       $resultado = $stmt->execute();
 
       $idPartida = $stmt->insert_id;
       $stmt->close();
 
       if ($idPartida && $idJ1 && $idJ2) {
-          $sqlPlayers = "INSERT INTO usuarios_juego (id_juego, id_usuario) VALUES (?, ?), (?, ?)";
-          $stmtP = $conexion->prepare($sqlPlayers);
-          $stmtP->bind_param("iiii", $idPartida, $idJ1, $idPartida, $idJ2);
-          $stmtP->execute();
-          $stmtP->close();
+          $sqlJugadores = "INSERT INTO usuarios_juego (id_juego, id_usuario) VALUES (?, ?), (?, ?)";
+          $stmtJugadores = $conexion->prepare($sqlJugadores);
+          $stmtJugadores->bind_param("iiii", $idPartida, $idJ1, $idPartida, $idJ2);
+          $stmtJugadores->execute();
+          $stmtJugadores->close();
       }
 
       $conexion->close();
@@ -63,29 +63,29 @@ class Juego {
           
           // Respaldo parcial en caso de que falten palabras para esa letra
           if (count($letradas) < 2) {
-              $excludeIds = [];
+              $idsExcluidos = [];
               foreach ($letradas as $l) {
-                  $excludeIds[] = $l['id_palabra'];
+                  $idsExcluidos[] = $l['id_palabra'];
               }
-              $excludeSql = "";
-              if (!empty($excludeIds)) {
-                  $excludeSql = "AND id_palabra NOT IN (" . implode(",", $excludeIds) . ")";
+              $sqlExclusiones = "";
+              if (!empty($idsExcluidos)) {
+                  $sqlExclusiones = "AND id_palabra NOT IN (" . implode(",", $idsExcluidos) . ")";
               }
               
-              $needed = 2 - count($letradas);
-              $sqlFallback = "SELECT id_palabra, termino, definicion, cantidad_letras 
+              $necesitadas = 2 - count($letradas);
+              $sqlRespaldo = "SELECT id_palabra, termino, definicion, cantidad_letras 
                               FROM palabras 
-                              WHERE nivel = ? $excludeSql 
+                              WHERE nivel = ? $sqlExclusiones 
                               ORDER BY RAND() 
-                              LIMIT $needed";
-              $stmtF = $conexion->prepare($sqlFallback);
-              $stmtF->bind_param("s", $nivel);
-              $stmtF->execute();
-              $resultF = $stmtF->get_result();
-              while ($row = $resultF->fetch_assoc()) {
+                              LIMIT $necesitadas";
+              $stmtRespaldo = $conexion->prepare($sqlRespaldo);
+              $stmtRespaldo->bind_param("s", $nivel);
+              $stmtRespaldo->execute();
+              $resultadoRespaldo = $stmtRespaldo->get_result();
+              while ($row = $resultadoRespaldo->fetch_assoc()) {
                   $letradas[] = $row;
               }
-              $stmtF->close();
+              $stmtRespaldo->close();
           }
           
           $palabrasJugador1[] = $letradas[0] ?? null;
@@ -95,8 +95,6 @@ class Juego {
       $conexion->close();
       return array_merge($palabrasJugador1, $palabrasJugador2);
    }
-
-      
 
    public static function registrarGanador($idPartida, $idGanador, $tiempoUsado = null){
       $conexion = conexion::crearConexion();
@@ -111,108 +109,105 @@ class Juego {
 
       return $resultado;
    }
-   
 
+   public static function verificarRespuesta($idJuego, $idUsuario, $idPalabra, $respuestaUsuario){
+       $conexion = conexion::crearConexion();
 
+       // 1. Obtener la palabra correcta de la BD para comparar
+       $sql = "SELECT termino FROM palabras WHERE id_palabra = ?";
+       $stmt = $conexion->prepare($sql);
+       $stmt->bind_param("i", $idPalabra);
+       $stmt->execute();
+       $resultado = $stmt->get_result();
+       $fila = $resultado->fetch_assoc();
+       $stmt->close();
 
-public static function verificarRespuesta($idJuego, $idUsuario, $idPalabra, $respuestaUsuario){
-    $conexion = conexion::crearConexion();
+       if (!$fila) {
+           $conexion->close();
+           return false;
+       }
 
-    // 1. Obtener la palabra correcta de la BD para comparar
-    $sql = "SELECT termino FROM palabras WHERE id_palabra = ?";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("i", $idPalabra);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-    $fila = $resultado->fetch_assoc();
-    $stmt->close();
+       $palabraCorrecta = $fila['termino'];
 
-    if (!$fila) {
-        $conexion->close();
-        return false;
-    }
+       // 2. Comparar (cuidando mayúsculas/acentos, quizá usando mb_strtolower)
+       $normalizar = function($texto) {
+           $texto = trim($texto);
+           $texto = mb_strtolower($texto, 'UTF-8');
+           $buscar     = ['á', 'é', 'í', 'ó', 'ú', 'ü'];
+           $reemplazar = ['a', 'e', 'i', 'o', 'u', 'u'];
+           return str_replace($buscar, $reemplazar, $texto);
+       };
 
-    $palabraCorrecta = $fila['termino'];
+       $palabraCorrectaNormalizada = $normalizar($palabraCorrecta);
+       $respuestaUsuarioNormalizada = $normalizar($respuestaUsuario);
 
-    // 2. Comparar (cuidando mayúsculas/acentos, quizá usando mb_strtolower)
-    $normalizar = function($texto) {
-        $texto = trim($texto);
-        $texto = mb_strtolower($texto, 'UTF-8');
-        $buscar     = ['á', 'é', 'í', 'ó', 'ú', 'ü'];
-        $reemplazar = ['a', 'e', 'i', 'o', 'u', 'u'];
-        return str_replace($buscar, $reemplazar, $texto);
-    };
+       $esCorrecto = ($palabraCorrectaNormalizada === $respuestaUsuarioNormalizada) ? 1 : 0;
 
-    $palabraCorrectaNorm = $normalizar($palabraCorrecta);
-    $respuestaUsuarioNorm = $normalizar($respuestaUsuario);
+       // 3. Insertar el resultado en una tabla intermedia de 'resultados_partida'
+       $sqlInsercion = "INSERT INTO resultados_partida (id_partida, id_usuario, id_palabra, respuesta_usuario, es_correcta) VALUES (?, ?, ?, ?, ?)";
+       $stmtInsercion = $conexion->prepare($sqlInsercion);
+       $stmtInsercion->bind_param("iiisi", $idJuego, $idUsuario, $idPalabra, $respuestaUsuario, $esCorrecto);
+       $stmtInsercion->execute();
+       $stmtInsercion->close();
 
-    $esCorrecto = ($palabraCorrectaNorm === $respuestaUsuarioNorm) ? 1 : 0;
+       $conexion->close();
 
-    // 3. Insertar el resultado en una tabla intermedia de 'resultados_partida'
-    $sqlInsert = "INSERT INTO resultados_partida (id_partida, id_usuario, id_palabra, respuesta_usuario, es_correcta) VALUES (?, ?, ?, ?, ?)";
-    $stmtInsert = $conexion->prepare($sqlInsert);
-    $stmtInsert->bind_param("iiisi", $idJuego, $idUsuario, $idPalabra, $respuestaUsuario, $esCorrecto);
-    $stmtInsert->execute();
-    $stmtInsert->close();
+       // 4. Retornar el resultado
+       return [
+           'es_correcta' => (bool)$esCorrecto,
+           'palabra_correcta' => $palabraCorrecta
+       ];
+   }
 
-    $conexion->close();
+   public static function obtenerUltimasPartidas() {
+       $conexion = conexion::crearConexion();
+       $sql = "SELECT j.id_juego, j.fecha_inicio, u.nombre_usuario AS ganador
+               FROM juegos j
+               LEFT JOIN ganadores_juego gj ON j.id_juego = gj.id_juego
+               LEFT JOIN usuarios u ON gj.id_usuario = u.id_usuario
+               ORDER BY j.fecha_inicio DESC
+               LIMIT 5";
+       
+       $stmt = $conexion->prepare($sql);
+       $stmt->execute();
+       $result = $stmt->get_result();
+       
+       $partidas = [];
+       while ($fila = $result->fetch_assoc()) {
+           $partidas[] = $fila;
+       }
+       
+       $stmt->close();
+       $conexion->close();
+       return $partidas;
+   }
 
-    // 4. Retornar el resultado
-    return [
-        'es_correcta' => (bool)$esCorrecto,
-        'palabra_correcta' => $palabraCorrecta
-    ];
-}
-
-public static function obtenerUltimasPartidas() {
-    $conexion = conexion::crearConexion();
-    $sql = "SELECT j.id_juego, j.fecha_inicio, u.nombre_usuario AS ganador
-            FROM juegos j
-            LEFT JOIN ganadores_juego gj ON j.id_juego = gj.id_juego
-            LEFT JOIN usuarios u ON gj.id_usuario = u.id_usuario
-            ORDER BY j.fecha_inicio DESC
-            LIMIT 5";
-    
-    $stmt = $conexion->prepare($sql);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    $partidas = [];
-    while ($fila = $result->fetch_assoc()) {
-        $partidas[] = $fila;
-    }
-    
-    $stmt->close();
-    $conexion->close();
-    return $partidas;
-}
-
-public static function obtenerUltimasPartidasEntre($idJ1, $idJ2) {
-    if (!$idJ1 || !$idJ2) {
-        return [];
-    }
-    $conexion = conexion::crearConexion();
-    $sql = "SELECT j.id_juego, j.fecha_inicio, u.nombre_usuario AS ganador
-            FROM juegos j
-            INNER JOIN usuarios_juego uj1 ON j.id_juego = uj1.id_juego AND uj1.id_usuario = ?
-            INNER JOIN usuarios_juego uj2 ON j.id_juego = uj2.id_juego AND uj2.id_usuario = ?
-            LEFT JOIN ganadores_juego gj ON j.id_juego = gj.id_juego
-            LEFT JOIN usuarios u ON gj.id_usuario = u.id_usuario
-            ORDER BY j.fecha_inicio DESC
-            LIMIT 5";
-    
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("ii", $idJ1, $idJ2);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    $partidas = [];
-    while ($fila = $result->fetch_assoc()) {
-        $partidas[] = $fila;
-    }
-    
-    $stmt->close();
-    $conexion->close();
-    return $partidas;
-}
+   public static function obtenerUltimasPartidasEntre($idJ1, $idJ2) {
+       if (!$idJ1 || !$idJ2) {
+           return [];
+       }
+       $conexion = conexion::crearConexion();
+       $sql = "SELECT j.id_juego, j.fecha_inicio, u.nombre_usuario AS ganador
+               FROM juegos j
+               INNER JOIN usuarios_juego uj1 ON j.id_juego = uj1.id_juego AND uj1.id_usuario = ?
+               INNER JOIN usuarios_juego uj2 ON j.id_juego = uj2.id_juego AND uj2.id_usuario = ?
+               LEFT JOIN ganadores_juego gj ON j.id_juego = gj.id_juego
+               LEFT JOIN usuarios u ON gj.id_usuario = u.id_usuario
+               ORDER BY j.fecha_inicio DESC
+               LIMIT 5";
+       
+       $stmt = $conexion->prepare($sql);
+       $stmt->bind_param("ii", $idJ1, $idJ2);
+       $stmt->execute();
+       $result = $stmt->get_result();
+       
+       $partidas = [];
+       while ($fila = $result->fetch_assoc()) {
+           $partidas[] = $fila;
+       }
+       
+       $stmt->close();
+       $conexion->close();
+       return $partidas;
+   }
 }

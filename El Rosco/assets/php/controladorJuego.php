@@ -8,7 +8,7 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 
 //verificamos la sesion de al menos un usuario para realizar acciones del juego
 if(!isset($_SESSION['usuario_j1']) && !isset($_SESSION['usuario_j2']) && (!isset($_POST['accion']) || $_POST['accion'] !== 'verificarSesion')){
-    echo json_encode(['exito' => false, 'message' => 'Acceso no autorizado']);
+    echo json_encode(['exito' => false, 'mensaje' => 'Acceso no autorizado']);
     exit;
 }
 
@@ -43,23 +43,23 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $resultado = Juego::registrarGanador($idJuego, $idGanador, $tiempoUsado);
             echo json_encode(['exito' => true, 'datos' => $resultado]);
         } else {
-            echo json_encode(['exito' => false, 'message' => 'Falta id_juego']);
+            echo json_encode(['exito' => false, 'mensaje' => 'Falta id_juego']);
         }
         break;
 
         case 'iniciarPartida':
         if (!isset($_SESSION['usuario_j1']) || !isset($_SESSION['usuario_j2'])) {
-            echo json_encode(['exito' => false, 'message' => 'Ambos jugadores deben iniciar sesión para comenzar.']);
+            echo json_encode(['exito' => false, 'mensaje' => 'Ambos jugadores deben iniciar sesión para comenzar.']);
             break;
         }
 
         $fechaInicio = date('Y-m-d H:i:s');
-        $tamaño = 27;
+        $tamano = 27;
         $nivel = $_POST['nivel'] ?? 'media';
         
         $idJ1 = $_SESSION['usuario_j1']->getId();
         $idJ2 = $_SESSION['usuario_j2']->getId();
-        $idPartida = Juego::crearPartida($fechaInicio, $tamaño, $nivel, $idJ1, $idJ2);
+        $idPartida = Juego::crearPartida($fechaInicio, $tamano, $nivel, $idJ1, $idJ2);
         
         // Seleccionar aleatoriamente el turno que inicia (1 o 2)
         $jugadorInicial = rand(1, 2);
@@ -102,7 +102,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         break;
 
         default:
-        echo json_encode(['exito' => false, 'message' => 'Accion no valida']);
+        echo json_encode(['exito' => false, 'mensaje' => 'Accion no valida']);
         break;
     } 
 }

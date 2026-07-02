@@ -9,10 +9,8 @@
 
 <body>
     <!-- Botón flotante para ver estadísticas (visible en todo momento, incluso sin login) -->
-    <div class="header-buttons"
-        style="position: fixed; top: 20px; right: 20px; z-index: 999; display: flex; gap: 10px;">
-        <button id="btnVerEstadisticasGenerales" class="btn-ranking-toggle" style="position: static;">📈 Estadísticas
-            Generales</button>
+    <div class="botones-encabezado">
+        <button id="btnVerEstadisticasGenerales" class="btn-alternar-ranking">Estadísticas Generales</button>
     </div>
 
     <header>
@@ -22,31 +20,31 @@
     <main>
         <!-- PANTALLA 1: Inicio de Sesión / Registro -->
         <section id="seccionUsuarios">
-            <h2 id="tituloLogin">Acceso al Juego - Jugador 1</h2>
-            <div id="loginContainer">
-                <form id="formularioLogin">
-                    <input type="text" id="loginUser" placeholder="Usuario" required>
-                    <input type="password" id="loginPass" placeholder="Contraseña" required>
+            <h2 id="tituloInicioSesion">Acceso al Juego - Jugador 1</h2>
+            <div id="contenedorInicioSesion">
+                <form id="formularioInicioSesion">
+                    <input type="text" id="usuarioInicioSesion" placeholder="Usuario" required>
+                    <input type="password" id="claveInicioSesion" placeholder="Contraseña" required>
                     <button type="submit">Iniciar Sesión</button>
                 </form>
             </div>
 
-            <form id="formularioRegistro" class="hidden">
+            <form id="formularioRegistro" class="oculto">
                 <input type="text" id="nombreUsuario" placeholder="Nombre de usuario" required>
-                <input type="password" id="password" placeholder="Contraseña (min 8 caracteres)" required>
-                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="contrasena" placeholder="Contraseña (min 8 caracteres)" required>
+                <input type="email" id="correo" placeholder="Email" required>
                 <input type="date" id="fechaNacimiento" placeholder="Fecha de nacimiento" required>
                 <button type="submit">Registrarse</button>
             </form>
 
-            <button id="btnToggleForm">¿No tienes cuenta? Regístrate</button>
+            <button id="btnAlternarFormulario">¿No tienes cuenta? Regístrate</button>
         </section>
 
         <!-- PANTALLA 2: Configuración y Selección de Partida (oculta por defecto) -->
-        <section id="configuracionJuego" class="hidden">
+        <section id="configuracionJuego" class="oculto">
             <h3>Selección de Partida</h3>
 
-            <div class="control-config">
+            <div class="control-configuracion">
                 <label for="selectNivel">Dificultad:</label>
                 <select id="selectNivel">
                     <option value="baja">Baja</option>
@@ -55,7 +53,7 @@
                 </select>
             </div>
 
-            <div class="control-config">
+            <div class="control-configuracion">
                 <label for="selectTiempo">Duración de la partida:</label>
                 <select id="selectTiempo">
                     <option value="120" selected>2 minutos</option>
@@ -65,7 +63,7 @@
                 </select>
             </div>
 
-            <div class="control-config">
+            <div class="control-configuracion">
                 <label for="selectAyuda">Ayuda adicional (Cantidad de letras):</label>
                 <select id="selectAyuda">
                     <option value="si" selected>Habilitada</option>
@@ -74,30 +72,31 @@
             </div>
 
             <button id="btnIniciarPartida">¡Comenzar Partida!</button>
-            <button id="btnSalirJuegoConfig" class="btn-abandonar btn-salir-config">Salir del juego</button>
+            <button id="btnSalirJuegoConfiguracion" class="btn-abandonar btn-salir-configuracion">Salir del
+                juego</button>
         </section>
 
         <!-- PANTALLA 3: Partida en Curso (oculta por defecto) -->
-        <section id="contenedorJuego" class="hidden">
+        <section id="contenedorJuego" class="oculto">
             <h2>EL ROSCO</h2>
 
             <!-- Zona General -->
             <div id="zonaGeneral" class="zona-general">
                 <h3>Zona General</h3>
-                <div class="general-grid">
-                    <div class="general-col">
+                <div class="general-cuadricula">
+                    <div class="general-columna">
                         <h4>Características</h4>
                         <p>Dificultad: <span id="generalDificultad" class="destacado">-</span></p>
                         <p>Duración: <span id="generalDuracion" class="destacado">-</span></p>
                         <p>Ayuda: <span id="generalAyuda" class="destacado">-</span></p>
                     </div>
-                    <div class="general-col">
+                    <div class="general-columna">
                         <h4>Turnos</h4>
                         <p>Inicia: <span id="generalJugadorInicial" class="destacado">-</span></p>
                         <div id="indicadorTurno">Turno activo: <span id="nombreJugadorActivo"
                                 class="nombre-jugador-1">Jugador 1</span></div>
                     </div>
-                    <div class="general-col">
+                    <div class="general-columna">
                         <h4>Últimas Partidas</h4>
                         <div id="listaUltimasPartidas" class="lista-ultimas-partidas">Cargando...</div>
                     </div>
@@ -108,15 +107,17 @@
             <!-- Zonas de Jugadores -->
             <div id="tablerosJugadores">
                 <div id="panel-jugador1" class="panel-jugador">
-                    <h3 id="label-jugador1">Jugador 1</h3>
-                    <div class="tiempo-jugador">Tiempo restante: <span id="tiempo-restante-j1" class="timer-j1">-</span>
+                    <h3 id="etiqueta-jugador1">Jugador 1</h3>
+                    <div class="tiempo-jugador">Tiempo restante: <span id="tiempo-restante-j1"
+                            class="temporizador-j1">-</span>
                     </div>
                     <p>Aciertos: <span id="aciertos-j1">0</span> | Errores: <span id="errores-j1">0</span></p>
                     <div id="zona-jugador1" class="rosco-jugador"></div>
                 </div>
                 <div id="panel-jugador2" class="panel-jugador">
-                    <h3 id="label-jugador2">Jugador 2</h3>
-                    <div class="tiempo-jugador">Tiempo restante: <span id="tiempo-restante-j2" class="timer-j2">-</span>
+                    <h3 id="etiqueta-jugador2">Jugador 2</h3>
+                    <div class="tiempo-jugador">Tiempo restante: <span id="tiempo-restante-j2"
+                            class="temporizador-j2">-</span>
                     </div>
                     <p>Aciertos: <span id="aciertos-j2">0</span> | Errores: <span id="errores-j2">0</span></p>
                     <div id="zona-jugador2" class="rosco-jugador"></div>
@@ -128,52 +129,39 @@
 
 
         <!-- PANTALLA 4: Estadísticas Generales del Juego (oculta por defecto) -->
-        <section id="seccionEstadisticasGenerales" class="hidden">
-            <div class="stats-header">
-                <h2>📊 Estadísticas Generales del Juego</h2>
-                <button id="btnVolverAlJuegoDesdeStats" class="btn-ranking-toggle btn-stats-volver">🎮 Volver al
+        <section id="seccionEstadisticasGenerales" class="oculto">
+            <div class="cabecera-estadisticas">
+                <h2>Estadísticas Generales del Juego</h2>
+                <button id="btnVolverAlJuegoDesdeEstadisticas" class="btn-alternar-ranking btn-volver-estadisticas">🎮
+                    Volver al
                     Juego</button>
             </div>
 
-            <div class="grid-stats">
+            <div class="cuadricula-estadisticas">
                 <!-- Ganadores General -->
-                <div class="card-stat">
-                    <h3>🏆 Más Ganadores <span>General</span></h3>
-                    <div id="statsWinnersGeneral">Cargando...</div>
+                <div class="tarjeta-estadistica">
+                    <h3>Más Ganadores <span>General</span></h3>
+                    <div id="statsGanadoresGeneral">Cargando...</div>
                 </div>
 
-                <!-- Ganadores Dificultad Baja -->
-                <div class="card-stat">
-                    <h3>🟢 Más Ganadores <span>Baja</span></h3>
-                    <div id="statsWinnersBaja">Cargando...</div>
-                </div>
-            </div>
-
-            <div class="grid-stats">
-                <!-- Ganadores Dificultad Media -->
-                <div class="card-stat">
-                    <h3>🟡 Más Ganadores <span>Media</span></h3>
-                    <div id="statsWinnersMedia">Cargando...</div>
-                </div>
-
-                <!-- Ganadores Dificultad Alta -->
-                <div class="card-stat">
-                    <h3>🔴 Más Ganadores <span>Alta</span></h3>
-                    <div id="statsWinnersAlta">Cargando...</div>
+                <!-- Ganadores por Dificultad (Baja, Media, Alta) -->
+                <div class="tarjeta-estadistica">
+                    <h3>Más Ganadores <span>por Dificultad</span></h3>
+                    <div id="statsGanadoresPorDificultad">Cargando...</div>
                 </div>
             </div>
 
-            <div class="grid-stats">
+            <div class="cuadricula-estadisticas">
                 <!-- Usuarios Más Rápidos -->
-                <div class="card-stat">
-                    <h3>⚡ Más Rápidos <span>Récords</span></h3>
-                    <div id="statsFastest">Cargando...</div>
+                <div class="tarjeta-estadistica">
+                    <h3>Más Rápidos <span>Récords</span></h3>
+                    <div id="statsMasRapidos">Cargando...</div>
                 </div>
 
                 <!-- Ranking General -->
-                <div class="card-stat">
-                    <h3>📈 Ranking General <span>Líderes</span></h3>
-                    <div id="statsRankingGeneral">Cargando...</div>
+                <div class="tarjeta-estadistica">
+                    <h3>Ranking General <span>Líderes</span></h3>
+                    <div id="statsClasificacionGeneral">Cargando...</div>
                 </div>
             </div>
         </section>

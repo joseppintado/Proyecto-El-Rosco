@@ -1,45 +1,45 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const btnToggle = document.getElementById('btnToggleForm');
-    const formLogin = document.getElementById('formularioLogin');
+    const btnAlternar = document.getElementById('btnAlternarFormulario');
+    const formularioInicioSesion = document.getElementById('formularioInicioSesion');
     const formRegistro = document.getElementById('formularioRegistro');
 
-    if (btnToggle && formLogin && formRegistro) {
+    if (btnAlternar && formularioInicioSesion && formRegistro) {
         // Toggle entre formulario de login y registro
-        btnToggle.addEventListener('click', () => {
-            formLogin.classList.toggle('hidden');
-            formRegistro.classList.toggle('hidden');
+        btnAlternar.addEventListener('click', () => {
+            formularioInicioSesion.classList.toggle('oculto');
+            formRegistro.classList.toggle('oculto');
 
-            btnToggle.textContent = formLogin.classList.contains('hidden')
+            btnAlternar.textContent = formularioInicioSesion.classList.contains('oculto')
                 ? "¿Ya tienes cuenta? Inicia sesión"
                 : "¿No tienes cuenta? Regístrate";
         });
     }
 
-    if (formLogin) {
+    if (formularioInicioSesion) {
         // Envío del formulario de Login
-        formLogin.addEventListener('submit', (e) => {
+        formularioInicioSesion.addEventListener('submit', (e) => {
             e.preventDefault();
-            const user = document.getElementById('loginUser').value;
-            const pass = document.getElementById('loginPass').value;
+            const usuario = document.getElementById('usuarioInicioSesion').value;
+            const clave = document.getElementById('claveInicioSesion').value;
 
-            let parametros = `nombreUsuario=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`;
+            let parametros = `nombreUsuario=${encodeURIComponent(usuario)}&contrasena=${encodeURIComponent(clave)}`;
             realizarPeticion('POST', 'El Rosco/assets/php/login.php', parametros, function (respuesta) {
                 if (respuesta.exito) {
                     if (respuesta.completo) {
                         // Pasamos de Pantalla 1 (Sesión) a Pantalla 2 (Configuración)
-                        document.getElementById('seccionUsuarios').classList.add('hidden');
-                        document.getElementById('configuracionJuego').classList.remove('hidden');
-                        document.getElementById('contenedorJuego').classList.add('hidden');
+                        document.getElementById('seccionUsuarios').classList.add('oculto');
+                        document.getElementById('configuracionJuego').classList.remove('oculto');
+                        document.getElementById('contenedorJuego').classList.add('oculto');
                     } else {
                         // Limpiar formulario y pasar a Jugador 2
-                        document.getElementById('loginUser').value = '';
-                        document.getElementById('loginPass').value = '';
-                        const title = document.getElementById('tituloLogin');
-                        if (title) title.textContent = "Acceso al Juego - Jugador 2";
+                        document.getElementById('usuarioInicioSesion').value = '';
+                        document.getElementById('claveInicioSesion').value = '';
+                        const titulo = document.getElementById('tituloInicioSesion');
+                        if (titulo) titulo.textContent = "Acceso al Juego - Jugador 2";
                         alert("Jugador 1 (" + respuesta.nombre + ") conectado con éxito. Ahora por favor inicie sesión el Jugador 2.");
                     }
                 } else {
-                    alert(respuesta.message || "Error al iniciar sesión");
+                    alert(respuesta.mensaje || "Error al iniciar sesión");
                 }
             });
         });
@@ -49,35 +49,35 @@ document.addEventListener('DOMContentLoaded', () => {
         // Envío del formulario de Registro con validaciones en cliente
         formRegistro.addEventListener('submit', (e) => {
             e.preventDefault();
-            const user = document.getElementById('nombreUsuario').value;
-            const pass = document.getElementById('password').value;
-            const email = document.getElementById('email').value;
-            const fechaNac = document.getElementById('fechaNacimiento').value;
+            const usuario = document.getElementById('nombreUsuario').value;
+            const clave = document.getElementById('contrasena').value;
+            const correo = document.getElementById('correo').value;
+            const fechaNacimiento = document.getElementById('fechaNacimiento').value;
 
             if (typeof Validador !== 'undefined') {
-                if (Validador.estaVacio(user) || Validador.estaVacio(pass) || Validador.estaVacio(email) || Validador.estaVacio(fechaNac)) {
+                if (Validador.estaVacio(usuario) || Validador.estaVacio(clave) || Validador.estaVacio(correo) || Validador.estaVacio(fechaNacimiento)) {
                     alert("Todos los campos son obligatorios.");
                     return;
                 }
-                if (!Validador.esPasswordSegura(pass)) {
+                if (!Validador.esContrasenaSegura(clave)) {
                     alert("La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, un número y un carácter especial.");
                     return;
                 }
-                if (!Validador.esEmailValido(email)) {
+                if (!Validador.esCorreoValido(correo)) {
                     alert("El correo electrónico no es válido.");
                     return;
                 }
             }
 
-            let parametros = `nombreUsuario=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&email=${encodeURIComponent(email)}&fechaNacimiento=${encodeURIComponent(fechaNac)}`;
+            let parametros = `nombreUsuario=${encodeURIComponent(usuario)}&contrasena=${encodeURIComponent(clave)}&correo=${encodeURIComponent(correo)}&fechaNacimiento=${encodeURIComponent(fechaNacimiento)}`;
             realizarPeticion('POST', 'El Rosco/assets/php/registro.php', parametros, function (respuesta) {
                 if (respuesta.exito) {
                     alert("registro exitoso, inicie secion");
-                    formLogin.classList.remove('hidden');
-                    formRegistro.classList.add('hidden');
-                    btnToggle.textContent = "¿No tienes cuenta? Regístrate";
+                    formularioInicioSesion.classList.remove('oculto');
+                    formRegistro.classList.add('oculto');
+                    btnAlternar.textContent = "¿No tienes cuenta? Regístrate";
                 } else {
-                    alert(respuesta.message || "Error al registrarse");
+                    alert(respuesta.mensaje || "Error al registrarse");
                 }
             });
         });
@@ -87,17 +87,17 @@ document.addEventListener('DOMContentLoaded', () => {
     realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', 'accion=verificarSesion', function (respuesta) {
         if (respuesta.exito) {
             // Si la sesión está activa, mostrar configuración directamente
-            document.getElementById('seccionUsuarios').classList.add('hidden');
-            document.getElementById('configuracionJuego').classList.remove('hidden');
+            document.getElementById('seccionUsuarios').classList.add('oculto');
+            document.getElementById('configuracionJuego').classList.remove('oculto');
         } else {
             // Si no está activa, forzar inicio de sesión correspondiente
-            document.getElementById('seccionUsuarios').classList.remove('hidden');
-            document.getElementById('configuracionJuego').classList.add('hidden');
-            const title = document.getElementById('tituloLogin');
+            document.getElementById('seccionUsuarios').classList.remove('oculto');
+            document.getElementById('configuracionJuego').classList.add('oculto');
+            const titulo = document.getElementById('tituloInicioSesion');
             if (respuesta.usuario_j1) {
-                if (title) title.textContent = "Acceso al Juego - Jugador 2";
+                if (titulo) titulo.textContent = "Acceso al Juego - Jugador 2";
             } else {
-                if (title) title.textContent = "Acceso al Juego - Jugador 1";
+                if (titulo) titulo.textContent = "Acceso al Juego - Jugador 1";
             }
         }
     });

@@ -19,16 +19,16 @@ class Usuario {
     }
 
     //registro de usuarios
-    public static function registrarUsuario($nombre, $password, $email, $fechaNacimiento){
+    public static function registrarUsuario($nombre, $contrasena, $correo, $fechaNacimiento){
        $conexion = conexion::crearConexion();
        
        //encriptar contraseña
-       $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+       $contrasenaEncriptada = password_hash($contrasena, PASSWORD_DEFAULT);
 
        //insertar usuario
        $sql = "INSERT INTO usuarios (nombre_usuario, password_hash, email, fecha_nacimiento) VALUES (?,?,?,?)";
        $stmt = $conexion->prepare($sql);
-       $stmt->bind_param("ssss", $nombre, $hashPassword, $email, $fechaNacimiento);
+       $stmt->bind_param("ssss", $nombre, $contrasenaEncriptada, $correo, $fechaNacimiento);
 
        $resultado = $stmt->execute();
 
@@ -40,7 +40,7 @@ class Usuario {
     }
 
     //inicio de sesión
-    public static function iniciarSesion($nombre, $password){
+    public static function iniciarSesion($nombre, $contrasena){
        $conexion = conexion::crearConexion();
        
        //buscar usuario
@@ -52,7 +52,7 @@ class Usuario {
        $resultado = $stmt->get_result();
        if ($usuario = $resultado->fetch_assoc()){
            //verificar contraseña
-           if (password_verify($password, $usuario['password_hash'])){
+           if (password_verify($contrasena, $usuario['password_hash'])){
                return new Usuario($usuario['id_usuario'], $nombre);
            }
        }
