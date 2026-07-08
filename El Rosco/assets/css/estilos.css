@@ -789,7 +789,10 @@ form button:hover,
 }
 
 .btn-volver-estadisticas {
-    position: static !important;
+    position: fixed !important;
+    top: 75px;
+    right: 20px;
+    z-index: 999;
 }
 
 .card-finalizada {
