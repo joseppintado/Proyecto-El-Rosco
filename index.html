@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="El Rosco/assets/css/estilos.css?v=10">
+    <link rel="stylesheet" href="El Rosco/assets/css/estilos.css?v=12">
     <title>El Rosco</title>
 </head>
 
@@ -21,6 +21,7 @@
         <!-- PANTALLA 1: Inicio de Sesión / Registro -->
         <section id="seccionUsuarios">
             <h2 id="tituloInicioSesion">Acceso al Juego - Jugador 1</h2>
+            <div id="mensajeServidorUsuarios" class="mensaje-servidor-container"></div>
             <div id="contenedorInicioSesion">
                 <form id="formularioInicioSesion">
                     <input type="text" id="usuarioInicioSesion" placeholder="Usuario" required>
@@ -43,6 +44,7 @@
         <!-- PANTALLA 2: Configuración y Selección de Partida (oculta por defecto) -->
         <section id="configuracionJuego" class="oculto">
             <h3>Selección de Partida</h3>
+            <div id="mensajeServidorConfiguracion" class="mensaje-servidor-container"></div>
 
             <div class="control-configuracion">
                 <label for="selectNivel">Dificultad:</label>
@@ -79,6 +81,7 @@
         <!-- PANTALLA 3: Partida en Curso (oculta por defecto) -->
         <section id="contenedorJuego" class="oculto">
             <h2>EL ROSCO</h2>
+            <div id="mensajeServidorJuego" class="mensaje-servidor-container"></div>
 
             <!-- Zona General -->
             <div id="zonaGeneral" class="zona-general">
@@ -167,12 +170,15 @@
         </section>
     </main>
 
+    <div id="toast-container"></div>
+
+    <script src="El Rosco/assets/js/alertas.js?v=9"></script>
     <script src="El Rosco/assets/js/gestorServicios.js?v=9"></script>
     <script src="El Rosco/assets/js/validaciones.js?v=9"></script>
     <script src="El Rosco/assets/js/juego.js?v=9"></script>
     <script src="El Rosco/assets/js/cronometro.js?v=9"></script>
     <script src="El Rosco/assets/js/estadisticas.js?v=9"></script>
-    <script src="El Rosco/assets/js/InicioSecion.js?v=9"></script>
+    <script src="El Rosco/assets/js/InicioSesion.js?v=9"></script>
 </body>
 
 <footer>

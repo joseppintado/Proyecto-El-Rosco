@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
             formularioInicioSesion.classList.toggle('oculto');
             formRegistro.classList.toggle('oculto');
 
+            // Limpiar mensajes previos del servidor al alternar formularios
+            limpiarMensajesServidor();
+
             btnAlternar.textContent = formularioInicioSesion.classList.contains('oculto')
                 ? "¿Ya tienes cuenta? Inicia sesión"
                 : "¿No tienes cuenta? Regístrate";
@@ -19,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Envío del formulario de Login
         formularioInicioSesion.addEventListener('submit', (e) => {
             e.preventDefault();
+            limpiarMensajesServidor();
             const usuario = document.getElementById('usuarioInicioSesion').value;
             const clave = document.getElementById('claveInicioSesion').value;
 
@@ -36,10 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('claveInicioSesion').value = '';
                         const titulo = document.getElementById('tituloInicioSesion');
                         if (titulo) titulo.textContent = "Acceso al Juego - Jugador 2";
-                        alert("Jugador 1 (" + respuesta.nombre + ") conectado con éxito. Ahora por favor inicie sesión el Jugador 2.");
+                        mostrarMensajeServidor("Jugador 1 (" + respuesta.nombre + ") conectado con éxito. Ahora por favor inicie sesión el Jugador 2.", "success", "usuarios");
                     }
                 } else {
-                    alert(respuesta.mensaje || "Error al iniciar sesión");
+                    mostrarMensajeServidor(respuesta.mensaje || "Error al iniciar sesión", "error", "usuarios");
                 }
             });
         });
@@ -49,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Envío del formulario de Registro con validaciones en cliente
         formRegistro.addEventListener('submit', (e) => {
             e.preventDefault();
+            limpiarMensajesServidor();
             const usuario = document.getElementById('nombreUsuario').value;
             const clave = document.getElementById('contrasena').value;
             const correo = document.getElementById('correo').value;
@@ -56,15 +61,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (typeof Validador !== 'undefined') {
                 if (Validador.estaVacio(usuario) || Validador.estaVacio(clave) || Validador.estaVacio(correo) || Validador.estaVacio(fechaNacimiento)) {
-                    alert("Todos los campos son obligatorios.");
+                    mostrarNotificacionCliente("Todos los campos son obligatorios.", "error");
                     return;
                 }
                 if (!Validador.esContrasenaSegura(clave)) {
-                    alert("La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, un número y un carácter especial.");
+                    mostrarNotificacionCliente("La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, un número y un carácter especial.", "error");
                     return;
                 }
                 if (!Validador.esCorreoValido(correo)) {
-                    alert("El correo electrónico no es válido.");
+                    mostrarNotificacionCliente("El correo electrónico no es válido.", "error");
                     return;
                 }
             }
@@ -72,12 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
             let parametros = `nombreUsuario=${encodeURIComponent(usuario)}&contrasena=${encodeURIComponent(clave)}&correo=${encodeURIComponent(correo)}&fechaNacimiento=${encodeURIComponent(fechaNacimiento)}`;
             realizarPeticion('POST', 'El Rosco/assets/php/registro.php', parametros, function (respuesta) {
                 if (respuesta.exito) {
-                    alert("registro exitoso, inicie secion");
+                    mostrarMensajeServidor("registro exitoso, inicie secion", "success", "usuarios");
                     formularioInicioSesion.classList.remove('oculto');
                     formRegistro.classList.add('oculto');
                     btnAlternar.textContent = "¿No tienes cuenta? Regístrate";
                 } else {
-                    alert(respuesta.mensaje || "Error al registrarse");
+                    mostrarMensajeServidor(respuesta.mensaje || "Error al registrarse", "error", "usuarios");
                 }
             });
         });

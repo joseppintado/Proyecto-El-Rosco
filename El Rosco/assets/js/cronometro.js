@@ -58,7 +58,7 @@ function iniciarCronometro() {
             actualizarVisualCronometro();
 
             if (tiempoRestante[turnoJugador] <= 0) {
-                alert(`¡Se acabó el tiempo para el Jugador ${turnoJugador}!`);
+                mostrarNotificacionCliente(`¡Se acabó el tiempo para el Jugador ${turnoJugador}!`, 'warning', 6000);
 
                 let indiceActivo = indiceLetraActual[turnoJugador];
                 let botonActivo = document.querySelector(`.pos-${turnoJugador}-${indiceActivo}`);

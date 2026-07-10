@@ -1,6 +1,4 @@
-/* Importamos Outfit de Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
-
+/* 1. CONFIGURACIÓN GLOBAL Y RESET */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -8,7 +6,7 @@
 }
 
 body {
-    font-family: 'Outfit', sans-serif;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     min-height: 100vh;
     display: flex;
@@ -43,24 +41,32 @@ main {
     gap: 30px;
 }
 
-/* Botón flotante del ranking */
+/* 2. BOTONES Y COMPONENTES REUTILIZABLES */
+/* Estilo base para todos los botones */
+button,
+.btn-letra {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Botón flotante / Ranking y Volver */
 .btn-alternar-ranking {
     position: fixed;
     top: 20px;
     right: 20px;
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     color: #38bdf8;
     padding: 10px 20px;
     border-radius: 30px;
     font-size: 1rem;
     font-weight: 600;
-    cursor: pointer;
     z-index: 999;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    font-family: inherit;
 }
 
 .btn-alternar-ranking:hover {
@@ -70,7 +76,6 @@ main {
     transform: translateY(-2px);
 }
 
-/* Contenedor de botones en el encabezado */
 .botones-encabezado {
     position: fixed;
     top: 20px;
@@ -80,25 +85,120 @@ main {
     gap: 10px;
 }
 
-/* Cuando el botón está dentro del contenedor botones-encabezado, se posiciona de forma estática */
 .botones-encabezado .btn-alternar-ranking {
     position: static;
 }
 
-/* Pantallas y Contenedores (Glassmorphism) */
+.btn-volver-estadisticas {
+    position: fixed !important;
+    top: 75px;
+    right: 20px;
+    z-index: 999;
+}
+
+/* Botones principales con gradientes */
+form button,
+#btnIniciarPartida,
+#btnEnviarRespuesta {
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    color: #0f172a;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 14px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
+}
+
+form button:hover,
+#btnIniciarPartida:hover,
+#btnEnviarRespuesta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
+    opacity: 0.95;
+}
+
+/* Botones de acción secundaria (Ceder, Ayuda) */
+.btn-ayuda,
+.btn-ceder {
+    background: #475569;
+    color: #cbd5e1;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.btn-ceder {
+    flex: 1;
+    font-size: 1.05rem;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-ayuda:hover,
+.btn-ceder:hover {
+    background: #64748b;
+    color: white;
+}
+
+/* Botones de acción primaria / Confirmar */
+.btn-confirmar {
+    flex: 1;
+    background: linear-gradient(90deg, #10b981, #059669);
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+}
+
+.btn-confirmar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Botón abandonar */
+.btn-abandonar {
+    background: #ef4444;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 10px 24px;
+    border-radius: 30px;
+    margin: 15px auto 25px auto;
+    display: block;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+}
+
+.btn-abandonar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+    opacity: 0.95;
+}
+
+/* 3. MAQUETACIÓN DE PANTALLAS (GLASSMORPHISM) */
 #seccionUsuarios,
 #configuracionJuego,
-#contenedorJuego {
+#contenedorJuego,
+.tarjeta-estadistica,
+.card-definicion {
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s;
+}
+
+#seccionUsuarios,
+#configuracionJuego,
+#contenedorJuego {
     border-radius: 20px;
     padding: 40px 30px;
     width: 100%;
     max-width: 500px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     text-align: center;
-    transition: all 0.3s;
 }
 
 #contenedorJuego {
@@ -113,7 +213,7 @@ main {
     font-weight: 700;
 }
 
-/* Formularios */
+/* Formularios e Inputs */
 form {
     display: flex;
     flex-direction: column;
@@ -122,7 +222,7 @@ form {
 }
 
 form input,
-#selectNivel,
+.control-configuracion select,
 #inputRespuesta {
     background: rgba(15, 23, 42, 0.6);
     border: 2px solid rgba(255, 255, 255, 0.1);
@@ -140,44 +240,17 @@ form input::placeholder {
 }
 
 form input:focus,
-#selectNivel:focus,
+.control-configuracion select:focus,
 #inputRespuesta:focus {
     border-color: #38bdf8;
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
 
-form button,
-#btnIniciarPartida,
-#btnEnviarRespuesta {
-    background: linear-gradient(90deg, #38bdf8, #818cf8);
-    color: #0f172a;
-    font-size: 1.1rem;
-    font-weight: 700;
-    padding: 14px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.2);
-}
-
-form button:hover,
-#btnIniciarPartida:hover,
-#btnEnviarRespuesta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4);
-    opacity: 0.95;
-}
-
 #btnAlternarFormulario {
     background: none;
-    border: none;
     color: #94a3b8;
     text-decoration: underline;
-    cursor: pointer;
     font-size: 0.95rem;
-    font-family: inherit;
-    transition: color 0.2s;
 }
 
 #btnAlternarFormulario:hover {
@@ -202,30 +275,10 @@ form button:hover,
 }
 
 .control-configuracion select {
-    background: rgba(15, 23, 42, 0.6);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    padding: 12px 18px;
-    border-radius: 10px;
-    font-size: 1rem;
-    color: white;
-    font-family: inherit;
-    outline: none;
-    transition: all 0.3s;
     width: 100%;
-    cursor: pointer;
 }
 
-.control-config select:focus {
-    border-color: #38bdf8;
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
-}
-
-#btnIniciarPartida {
-    width: 100%;
-    margin-top: 10px;
-}
-
-/* Zona General */
+/* 4. INTERFAZ DE PARTIDA EN CURSO */
 .zona-general {
     background: rgba(15, 23, 42, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -275,14 +328,10 @@ form button:hover,
     letter-spacing: 0.5px;
 }
 
-.general-col p {
+.general-columna p {
     font-size: 0.9rem;
     color: #cbd5e1;
     margin-bottom: 8px;
-}
-
-.general-col p:last-child {
-    margin-bottom: 0;
 }
 
 .destacado {
@@ -303,7 +352,7 @@ form button:hover,
     margin-top: 10px;
 }
 
-/* Tiempos de los jugadores en sus zonas */
+/* Marcadores de tiempo y turno */
 .tiempo-jugador {
     font-size: 1.05rem;
     font-weight: 800;
@@ -417,10 +466,8 @@ form button:hover,
     border: 2px solid rgba(255, 255, 255, 0.1);
     background-color: rgba(255, 255, 255, 0.05);
     color: #e2e8f0;
-    cursor: pointer;
     font-weight: 800;
     font-size: 0.95rem;
-    transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -447,6 +494,31 @@ form button:hover,
     cursor: not-allowed;
 }
 
+/* Animación pulsante para la letra activa */
+.btn-letra.letra-activa {
+    border-color: #ff9f1c !important;
+    background-color: rgba(255, 159, 28, 0.25) !important;
+    color: white !important;
+    font-weight: 900;
+    box-shadow: 0 0 20px rgba(255, 159, 28, 0.8) !important;
+    transform: scale(1.15);
+    animation: pulsar-letra 1.5s infinite ease-in-out;
+}
+
+@keyframes pulsar-letra {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 10px rgba(255, 159, 28, 0.5);
+    }
+
+    50% {
+        transform: scale(1.15);
+        box-shadow: 0 0 25px rgba(255, 159, 28, 0.9);
+    }
+}
+
 /* Card de Definición */
 #zonaDefinicion {
     width: 100%;
@@ -455,11 +527,8 @@ form button:hover,
 }
 
 .card-definicion {
-    background: rgba(30, 41, 59, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
     padding: 30px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
     border-left: 6px solid #ff9f1c;
     text-align: center;
     display: flex;
@@ -472,24 +541,6 @@ form button:hover,
     font-size: 1.25rem;
     line-height: 1.6;
     color: #f1f5f9;
-}
-
-.btn-ayuda {
-    background: #475569;
-    color: #cbd5e1;
-    border: none;
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: inherit;
-    font-weight: 600;
-    transition: all 0.2s;
-}
-
-.btn-ayuda:hover {
-    background: #64748b;
-    color: white;
 }
 
 .ayuda-letras {
@@ -513,97 +564,6 @@ form button:hover,
     padding: 12px;
 }
 
-/* Tabla de Ranking del Sidebar */
-.tabla-clasificacion {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background: rgba(15, 23, 42, 0.4);
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.tabla-clasificacion th,
-.tabla-clasificacion td {
-    padding: 14px 18px;
-    text-align: left;
-}
-
-.tabla-clasificacion th {
-    background: rgba(15, 23, 42, 0.8);
-    color: #94a3b8;
-    font-weight: 700;
-    font-size: 0.9rem;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.05);
-}
-
-.tabla-clasificacion td {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-    font-size: 0.95rem;
-    color: #e2e8f0;
-}
-
-.tabla-clasificacion tr:last-child td {
-    border-bottom: none;
-}
-
-.tabla-clasificacion tr:hover {
-    background-color: rgba(255, 255, 255, 0.02);
-}
-
-#btnCargarRanking {
-    background: #334155;
-    color: #cbd5e1;
-    border: none;
-    padding: 12px;
-    border-radius: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.2s;
-    width: 100%;
-}
-
-#btnCargarRanking:hover {
-    background: #475569;
-    color: white;
-}
-
-/* Utilidades */
-.oculto {
-    display: none !important;
-}
-
-/* Animación pulsante para la letra activa */
-.btn-letra.letra-activa {
-    border-color: #ff9f1c !important;
-    background-color: rgba(255, 159, 28, 0.25) !important;
-    color: white !important;
-    font-weight: 900;
-    box-shadow: 0 0 20px rgba(255, 159, 28, 0.8) !important;
-    transform: scale(1.15);
-    animation: pulsar-letra 1.5s infinite ease-in-out;
-}
-
-@keyframes pulsar-letra {
-    0% {
-        transform: scale(1);
-        box-shadow: 0 0 10px rgba(255, 159, 28, 0.5);
-    }
-
-    50% {
-        transform: scale(1.15);
-        box-shadow: 0 0 25px rgba(255, 159, 28, 0.9);
-    }
-
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 10px rgba(255, 159, 28, 0.5);
-    }
-}
-
-/* Indicador de letra en definición */
 .letra-indicador {
     font-size: 1.1rem;
     color: #94a3b8;
@@ -624,7 +584,6 @@ form button:hover,
     vertical-align: middle;
 }
 
-/* Acciones en la tarjeta de definición */
 .definicion-acciones {
     display: flex;
     justify-content: center;
@@ -634,144 +593,7 @@ form button:hover,
     margin-top: 10px;
 }
 
-.btn-confirmar {
-    flex: 1;
-    background: linear-gradient(90deg, #10b981, #059669);
-    color: white;
-    font-size: 1.05rem;
-    font-weight: 700;
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
-    transition: all 0.3s;
-}
-
-.btn-confirmar:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-}
-
-.btn-ceder {
-    flex: 1;
-    background: #475569;
-    color: #f1f5f9;
-    font-size: 1.05rem;
-    font-weight: 700;
-    padding: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.btn-ceder:hover {
-    background: #64748b;
-    color: white;
-    transform: translateY(-2px);
-}
-
-.btn-abandonar {
-    background: #ef4444;
-    color: white;
-    font-size: 1rem;
-    font-weight: 700;
-    padding: 10px 24px;
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    margin: 15px auto 25px auto;
-    display: block;
-    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
-    transition: all 0.3s ease;
-    font-family: inherit;
-}
-
-.btn-abandonar:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-    opacity: 0.95;
-}
-
-/* Pantalla de Estadísticas Generales */
-.cuadricula-estadisticas {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 25px;
-    margin-bottom: 25px;
-    width: 100%;
-}
-
-.tarjeta-estadistica {
-    background: rgba(30, 41, 59, 0.7);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    text-align: left;
-}
-
-.tarjeta-estadistica h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #f8fafc;
-    margin-top: 0;
-    margin-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding-bottom: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.tarjeta-estadistica h3 span {
-    font-size: 0.85rem;
-    color: #ff9f1c;
-    background: rgba(255, 159, 28, 0.1);
-    padding: 2px 10px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 159, 28, 0.2);
-}
-
-.tabla-estadisticas {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-}
-
-.tabla-estadisticas th,
-.tabla-estadisticas td {
-    padding: 10px 12px;
-    text-align: left;
-}
-
-.tabla-estadisticas th {
-    color: #94a3b8;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    font-weight: 600;
-}
-
-.tabla-estadisticas td {
-    color: #e2e8f0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-}
-
-.tabla-estadisticas tr:last-child td {
-    border-bottom: none;
-}
-
-.posicion-numero {
-    font-weight: 700;
-    color: #ff9f1c;
-}
-
-/* Clases para desacoplamiento y separación de capas */
-.tiempo-critico {
-    color: #ef4444 !important;
-}
-
+/* 5. PANTALLA DE ESTADÍSTICAS Y RANKING */
 .cabecera-estadisticas {
     display: flex;
     justify-content: space-between;
@@ -788,13 +610,114 @@ form button:hover,
     -webkit-text-fill-color: transparent;
 }
 
-.btn-volver-estadisticas {
-    position: fixed !important;
-    top: 75px;
-    right: 20px;
-    z-index: 999;
+.cuadricula-estadisticas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+    margin-bottom: 25px;
+    width: 100%;
 }
 
+.tarjeta-estadistica {
+    border-radius: 16px;
+    padding: 20px;
+    text-align: left;
+}
+
+.tarjeta-estadistica h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.tarjeta-estadistica h3 span {
+    font-size: 0.85rem;
+    color: #ff9f1c;
+    background: rgba(255, 159, 28, 0.1);
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 159, 28, 0.2);
+}
+
+.tabla-estadisticas,
+.tabla-clasificacion {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-estadisticas th,
+.tabla-estadisticas td,
+.tabla-clasificacion th,
+.tabla-clasificacion td {
+    padding: 10px 12px;
+    text-align: left;
+}
+
+.tabla-estadisticas th,
+.tabla-clasificacion th {
+    color: #94a3b8;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-weight: 600;
+}
+
+.tabla-estadisticas td,
+.tabla-clasificacion td {
+    color: #e2e8f0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.tabla-estadisticas tr:last-child td,
+.tabla-clasificacion tr:last-child td {
+    border-bottom: none;
+}
+
+.posicion-numero {
+    font-weight: 700;
+    color: #ff9f1c;
+}
+
+/* Ranking Sidebar específico */
+.tabla-clasificacion {
+    margin-top: 10px;
+    background: rgba(15, 23, 42, 0.4);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tabla-clasificacion th,
+.tabla-clasificacion td {
+    padding: 14px 18px;
+}
+
+.tabla-clasificacion th {
+    background: rgba(15, 23, 42, 0.8);
+}
+
+.tabla-clasificacion tr:hover {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+#btnCargarRanking {
+    background: #334155;
+    color: #cbd5e1;
+    padding: 12px;
+    font-weight: 600;
+    width: 100%;
+}
+
+#btnCargarRanking:hover {
+    background: #475569;
+    color: white;
+}
+
+/* 6. PANTALLA FIN DE PARTIDA / HISTORIAL / UTILIDADES */
 .card-finalizada {
     border-left-color: #2ec4b6 !important;
 }
@@ -803,10 +726,11 @@ form button:hover,
     margin-top: 15px !important;
 }
 
-.historial-vacio {
+.historial-vacio,
+.estadisticas-vacio {
     color: #94a3b8;
     font-size: 0.9rem;
-    margin-top: 5px;
+    margin: 10px 0;
 }
 
 .historial-lista {
@@ -817,7 +741,14 @@ form button:hover,
     text-align: left;
 }
 
-.ganador-destacado {
+.historial-item {
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 4px;
+}
+
+.ganador-destacado,
+.tiempo-destacado {
     color: #10b981;
 }
 
@@ -825,20 +756,8 @@ form button:hover,
     color: #94a3b8;
 }
 
-.historial-item {
-    margin-bottom: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    padding-bottom: 4px;
-}
-
-.estadisticas-vacio {
-    color: #94a3b8;
-    font-size: 0.9rem;
-    margin: 10px 0;
-}
-
-.tiempo-destacado {
-    color: #10b981;
+.tiempo-critico {
+    color: #ef4444 !important;
 }
 
 .btn-cerrar-fin {
@@ -851,12 +770,11 @@ form button:hover,
     width: 100%;
 }
 
-/* Consistencia de botones en pantalla de selección de partida */
+/* Consistencia de botones de control */
 #btnIniciarPartida,
 #btnSalirJuegoConfiguracion {
     width: 100% !important;
     padding: 14px !important;
-    border-radius: 10px !important;
     font-size: 1.1rem !important;
     margin: 15px 0 0 0 !important;
     display: block !important;
@@ -866,18 +784,187 @@ form button:hover,
     margin-top: 25px !important;
 }
 
-/* Consistencia de botones al finalizar/abandonar partida */
-#btnVolverAConfig,
+#btnVolverAConfiguracion,
 #btnSalirJuegoFin {
     flex: 1 !important;
     padding: 12px 20px !important;
     font-size: 1.05rem !important;
-    border-radius: 10px !important;
     font-weight: 700 !important;
-    border: none !important;
-    cursor: pointer !important;
     text-align: center !important;
     display: inline-block !important;
     margin: 0 !important;
-    transition: all 0.3s ease !important;
+}
+
+.oculto {
+    display: none !important;
+}
+
+/* 7. SISTEMA DE MENSAJES Y ALERTAS PERSONALIZADAS */
+/* --- Contenedor de Mensajes del Servidor (Inyección HTML) --- */
+.mensaje-servidor-container {
+    width: 100%;
+    margin-bottom: 20px;
+    min-height: 0;
+    transition: all 0.3s ease;
+}
+
+.mensaje-servidor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: rgba(30, 41, 59, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    animation: fadeInServerMsg 0.4s ease forwards;
+}
+
+.mensaje-servidor.success {
+    border-left: 5px solid #10b981;
+    color: #10b981;
+}
+
+.mensaje-servidor.error {
+    border-left: 5px solid #ef4444;
+    color: #f87171;
+}
+
+@keyframes fadeInServerMsg {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Contenedor de Notificaciones del Cliente (Toasts Flotantes) --- */
+#toast-container {
+    position: fixed;
+    top: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 90%;
+    max-width: 460px;
+    pointer-events: none;
+    /* Permite clicks a través del contenedor vacío */
+}
+
+.toast-cliente {
+    pointer-events: auto;
+    /* Permite clickear la cruz del toast */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.4;
+    animation: toastSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    transition: all 0.3s ease;
+}
+
+.toast-cliente.success {
+    border-left: 6px solid #10b981;
+}
+
+.toast-cliente.success .toast-icon {
+    color: #10b981;
+    font-size: 1.2rem;
+}
+
+.toast-cliente.error {
+    border-left: 6px solid #ef4444;
+}
+
+.toast-cliente.error .toast-icon {
+    color: #ef4444;
+    font-size: 1.2rem;
+}
+
+.toast-cliente.warning {
+    border-left: 6px solid #ff9f1c;
+}
+
+.toast-cliente.warning .toast-icon {
+    color: #ff9f1c;
+    font-size: 1.2rem;
+}
+
+.toast-cliente.info {
+    border-left: 6px solid #38bdf8;
+}
+
+.toast-cliente.info .toast-icon {
+    color: #38bdf8;
+    font-size: 1.2rem;
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-grow: 1;
+}
+
+.toast-close-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0 0 0 5px;
+    line-height: 1;
+    transition: color 0.2s, transform 0.2s;
+}
+
+.toast-close-btn:hover {
+    color: #f8fafc;
+    transform: scale(1.15);
+}
+
+.toast-descarga {
+    animation: toastFadeOut 0.3s ease forwards;
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastFadeOut {
+    from {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    to {
+        transform: scale(0.9);
+        opacity: 0;
+    }
 }

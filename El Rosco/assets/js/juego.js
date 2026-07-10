@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function salirDelJuego() {
+    limpiarMensajesServidor();
     realizarPeticion('POST', 'El Rosco/assets/php/logout.php', '', function (respuesta) {
         if (respuesta.exito) {
             // Limpiar campos de login
@@ -106,7 +107,7 @@ function salirDelJuego() {
             document.getElementById('seccionUsuarios').classList.remove('oculto');
             document.getElementById('zonaDefinicion').innerHTML = "";
         } else {
-            alert("Error al salir del juego.");
+            mostrarMensajeServidor("Error al salir del juego.", "error", "configuracion");
         }
     });
 }
@@ -121,12 +122,13 @@ function cargarPalabrasDelRosco() {
             iniciarTablero(palabras);
         } else {
             console.error("No se recibieron palabras.");
-            alert("Error al cargar las palabras del juego.");
+            mostrarMensajeServidor("Error al cargar las palabras del juego.", "error", "juego");
         }
     });
 }
 
 function iniciarNuevaPartida() {
+    limpiarMensajesServidor();
     let nivel = document.getElementById('selectNivel').value;
     let parametros = `accion=iniciarPartida&nivel=${nivel}`;
 
@@ -152,7 +154,7 @@ function iniciarNuevaPartida() {
 
             cargarPalabrasDelRosco();
         } else {
-            alert("Error al iniciar la partida: " + respuesta.mensaje);
+            mostrarMensajeServidor("Error al iniciar la partida: " + respuesta.mensaje, "error", "configuracion");
         }
     });
 }
@@ -409,7 +411,7 @@ function enviarRespuesta(idJuego, idPalabra, respuesta, indexRelativo, numJugado
                 aciertos[numJugador]++;
                 document.getElementById(`aciertos-j${numJugador}`).textContent = aciertos[numJugador];
 
-                alert("Letra " + abecedario[indexRelativo].toUpperCase() + ": Correcto");
+                mostrarNotificacionCliente("Letra " + abecedario[indexRelativo].toUpperCase() + ": Correcto", "success", 2000);
 
                 // Mantiene el turno, avanza al siguiente término del mismo jugador
                 indiceLetraActual[numJugador] = (indiceLetraActual[numJugador] + 1) % 27;
@@ -418,7 +420,7 @@ function enviarRespuesta(idJuego, idPalabra, respuesta, indexRelativo, numJugado
                 errores[numJugador]++;
                 document.getElementById(`errores-j${numJugador}`).textContent = errores[numJugador];
 
-                alert("Letra " + abecedario[indexRelativo].toUpperCase() + ": Incorrecto. La palabra correcta era: " + datos.palabra_correcta);
+                mostrarNotificacionCliente("Letra " + abecedario[indexRelativo].toUpperCase() + ": Incorrecto. La palabra correcta era: " + datos.palabra_correcta, "error", 5000);
 
                 // Pierde el turno y avanza de término
                 indiceLetraActual[numJugador] = (indiceLetraActual[numJugador] + 1) % 27;
@@ -437,7 +439,7 @@ function enviarRespuesta(idJuego, idPalabra, respuesta, indexRelativo, numJugado
             actualizarVisualTurno();
             presentarDefinicionActiva();
         } else {
-            alert("Error: " + resultado.mensaje);
+            mostrarNotificacionCliente("Error: " + resultado.mensaje, "error", 4000);
         }
     });
 }
@@ -495,7 +497,7 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
         mensajeFinal = "¡Tiempo agotado! " + mensajeFinal;
     }
 
-    alert(mensajeFinal);
+    mostrarNotificacionCliente(mensajeFinal, "info", 6000);
 
     // Registrar en BD el ganador
     if (ganador === 1 || ganador === 2) {

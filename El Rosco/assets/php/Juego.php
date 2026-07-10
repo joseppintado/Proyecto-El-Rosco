@@ -73,19 +73,49 @@ class Juego {
               }
               
               $necesitadas = 2 - count($letradas);
+              
+              // 1. Intentar buscar palabras que CONTIENEN la letra actual (LOWER(termino) LIKE '%letra%')
               $sqlRespaldo = "SELECT id_palabra, termino, definicion, cantidad_letras 
                               FROM palabras 
-                              WHERE nivel = ? $sqlExclusiones 
+                              WHERE nivel = ? AND LOWER(termino) LIKE ? $sqlExclusiones 
                               ORDER BY RAND() 
                               LIMIT $necesitadas";
               $stmtRespaldo = $conexion->prepare($sqlRespaldo);
-              $stmtRespaldo->bind_param("s", $nivel);
+              $likeParam = "%" . strtolower($letra) . "%";
+              $stmtRespaldo->bind_param("ss", $nivel, $likeParam);
               $stmtRespaldo->execute();
               $resultadoRespaldo = $stmtRespaldo->get_result();
               while ($row = $resultadoRespaldo->fetch_assoc()) {
                   $letradas[] = $row;
               }
               $stmtRespaldo->close();
+
+              // 2. Si aún falta alguna palabra (caso extremo), buscar cualquier palabra aleatoria
+              if (count($letradas) < 2) {
+                  $idsExcluidos = [];
+                  foreach ($letradas as $l) {
+                      $idsExcluidos[] = $l['id_palabra'];
+                  }
+                  $sqlExclusiones = "";
+                  if (!empty($idsExcluidos)) {
+                      $sqlExclusiones = "AND id_palabra NOT IN (" . implode(",", $idsExcluidos) . ")";
+                  }
+                  
+                  $necesitadas = 2 - count($letradas);
+                  $sqlRespaldoAbsoluto = "SELECT id_palabra, termino, definicion, cantidad_letras 
+                                          FROM palabras 
+                                          WHERE nivel = ? $sqlExclusiones 
+                                          ORDER BY RAND() 
+                                          LIMIT $necesitadas";
+                  $stmtRespaldoAbsoluto = $conexion->prepare($sqlRespaldoAbsoluto);
+                  $stmtRespaldoAbsoluto->bind_param("s", $nivel);
+                  $stmtRespaldoAbsoluto->execute();
+                  $resultadoRespaldoAbsoluto = $stmtRespaldoAbsoluto->get_result();
+                  while ($row = $resultadoRespaldoAbsoluto->fetch_assoc()) {
+                      $letradas[] = $row;
+                  }
+                  $stmtRespaldoAbsoluto->close();
+              }
           }
           
           $palabrasJugador1[] = $letradas[0] ?? null;
