@@ -1,16 +1,16 @@
 function cargarEstadisticasGenerales() {
     realizarPeticion('GET', 'El Rosco/assets/php/obtener_estadisticas.php', 't=' + new Date().getTime(), function (respuesta) {
         if (respuesta.exito) {
-            // Renderizar Más Ganadores General
+            // más ganadores general
             renderizarTablaEstadisticas('statsGanadoresGeneral', respuesta.ganadoresGeneral, 'victorias', 'victoria', 'victorias');
 
-            // Renderizar por dificultad (combinando las tres en una sola tabla)
+            // por dificultad 
             renderizarTablaPorDificultad('statsGanadoresPorDificultad', respuesta.ganadoresBaja, respuesta.ganadoresMedia, respuesta.ganadoresAlta);
 
-            // Renderizar Más Rápidos
+            // más rápidos
             renderizarTablaMasRapidos('statsMasRapidos', respuesta.masRapidos);
 
-            // Renderizar Ranking General
+            // Ranking General
             renderizarTablaRanking('statsClasificacionGeneral', respuesta.rankingGeneral);
         } else {
             console.error("Error al cargar estadísticas:", respuesta.mensaje);
@@ -22,9 +22,9 @@ function renderizarTablaPorDificultad(idContenedor, ganadoresBaja, ganadoresMedi
     let contenedor = document.getElementById(idContenedor);
     if (!contenedor) return;
 
-    let tieneDatos = (ganadoresBaja && ganadoresBaja.length > 0) || 
-                      (ganadoresMedia && ganadoresMedia.length > 0) || 
-                      (ganadoresAlta && ganadoresAlta.length > 0);
+    let tieneDatos = (ganadoresBaja && ganadoresBaja.length > 0) ||
+        (ganadoresMedia && ganadoresMedia.length > 0) ||
+        (ganadoresAlta && ganadoresAlta.length > 0);
 
     if (!tieneDatos) {
         contenedor.innerHTML = "<p class='estadisticas-vacio'>No hay registros aún.</p>";

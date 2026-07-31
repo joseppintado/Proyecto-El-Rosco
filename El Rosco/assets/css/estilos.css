@@ -41,7 +41,7 @@ main {
     gap: 30px;
 }
 
-/* 2. BOTONES Y COMPONENTES REUTILIZABLES */
+/* 2. BOTONES Y COMPONENTES */
 /* Estilo base para todos los botones */
 button,
 .btn-letra {
@@ -53,7 +53,8 @@ button,
 }
 
 /* Botón flotante / Ranking y Volver */
-.btn-alternar-ranking {
+.btn-alternar-ranking,
+.btn-volver-estadisticas {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -69,7 +70,8 @@ button,
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.btn-alternar-ranking:hover {
+.btn-alternar-ranking:hover,
+.btn-volver-estadisticas:hover {
     background: #38bdf8;
     color: #0f172a;
     box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
@@ -90,10 +92,7 @@ button,
 }
 
 .btn-volver-estadisticas {
-    position: fixed !important;
     top: 75px;
-    right: 20px;
-    z-index: 999;
 }
 
 /* Botones principales con gradientes */
@@ -178,12 +177,12 @@ form button:hover,
     opacity: 0.95;
 }
 
-/* 3. MAQUETACIÓN DE PANTALLAS (GLASSMORPHISM) */
+/* 3. MAQUETACIÓN DE PANTALLAS */
 #seccionUsuarios,
 #configuracionJuego,
 #contenedorJuego,
 .tarjeta-estadistica,
-.card-definicion {
+.tarjeta-definicion {
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -223,7 +222,7 @@ form {
 
 form input,
 .control-configuracion select,
-#inputRespuesta {
+#campoRespuesta {
     background: rgba(15, 23, 42, 0.6);
     border: 2px solid rgba(255, 255, 255, 0.1);
     padding: 12px 18px;
@@ -241,7 +240,7 @@ form input::placeholder {
 
 form input:focus,
 .control-configuracion select:focus,
-#inputRespuesta:focus {
+#campoRespuesta:focus {
     border-color: #38bdf8;
     box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
 }
@@ -401,7 +400,7 @@ form input:focus,
     margin-top: 15px;
 }
 
-.panel-jugador {
+.recuadro-jugador {
     width: 48%;
     background: rgba(15, 23, 42, 0.4);
     border: 3px solid transparent;
@@ -413,40 +412,40 @@ form input:focus,
     pointer-events: none;
 }
 
-.panel-jugador h3 {
+.recuadro-jugador h3 {
     margin-bottom: 5px;
     font-size: 1.4rem;
     font-weight: 700;
 }
 
-#panel-jugador1 h3 {
+#recuadro-jugador1 h3 {
     color: #38bdf8;
 }
 
-#panel-jugador2 h3 {
+#recuadro-jugador2 h3 {
     color: #c084fc;
 }
 
-.panel-jugador p {
+.recuadro-jugador p {
     font-weight: 600;
     color: #94a3b8;
     font-size: 0.95rem;
     margin-bottom: 20px;
 }
 
-.panel-jugador.jugador-activo {
+.recuadro-jugador.jugador-activo {
     opacity: 1;
     pointer-events: auto;
     transform: scale(1.02);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
 }
 
-#panel-jugador1.jugador-activo {
+#recuadro-jugador1.jugador-activo {
     border-color: #38bdf8;
     box-shadow: 0 0 25px rgba(56, 189, 248, 0.25);
 }
 
-#panel-jugador2.jugador-activo {
+#recuadro-jugador2.jugador-activo {
     border-color: #c084fc;
     box-shadow: 0 0 25px rgba(192, 132, 252, 0.25);
 }
@@ -526,7 +525,7 @@ form input:focus,
     margin-top: 15px;
 }
 
-.card-definicion {
+.tarjeta-definicion {
     border-radius: 16px;
     padding: 30px;
     border-left: 6px solid #ff9f1c;
@@ -537,7 +536,7 @@ form input:focus,
     gap: 20px;
 }
 
-.card-definicion p {
+.tarjeta-definicion p {
     font-size: 1.25rem;
     line-height: 1.6;
     color: #f1f5f9;
@@ -553,7 +552,7 @@ form input:focus,
     border: 1px solid rgba(255, 159, 28, 0.2);
 }
 
-#inputRespuesta {
+#campoRespuesta {
     width: 100%;
     max-width: 320px;
 }
@@ -682,7 +681,7 @@ form input:focus,
     color: #ff9f1c;
 }
 
-/* Ranking Sidebar específico */
+/* Ranking específico */
 .tabla-clasificacion {
     margin-top: 10px;
     background: rgba(15, 23, 42, 0.4);
@@ -718,11 +717,11 @@ form input:focus,
 }
 
 /* 6. PANTALLA FIN DE PARTIDA / HISTORIAL / UTILIDADES */
-.card-finalizada {
+.tarjeta-finalizada {
     border-left-color: #2ec4b6 !important;
 }
 
-.btn-volver-config {
+.btn-volver-configuracion {
     margin-top: 15px !important;
 }
 
@@ -760,15 +759,11 @@ form input:focus,
     color: #ef4444 !important;
 }
 
-.btn-cerrar-fin {
+.btn-cerrar-final {
     margin: 0 !important;
     display: inline-block !important;
 }
 
-.btn-salir-configuracion {
-    margin-top: 15px !important;
-    width: 100%;
-}
 
 /* Consistencia de botones de control */
 #btnIniciarPartida,
@@ -799,8 +794,8 @@ form input:focus,
     display: none !important;
 }
 
-/* 7. SISTEMA DE MENSAJES Y ALERTAS PERSONALIZADAS */
-/* --- Contenedor de Mensajes del Servidor (Inyección HTML) --- */
+/* 7. SISTEMA DE MENSAJES Y ALERTAS */
+/* --- Contenedor de Mensajes del Servidor --- */
 .mensaje-servidor-container {
     width: 100%;
     margin-bottom: 20px;
@@ -845,8 +840,8 @@ form input:focus,
     }
 }
 
-/* --- Contenedor de Notificaciones del Cliente (Toasts Flotantes) --- */
-#toast-container {
+/* --- Contenedor de Notificaciones del Cliente (Flotantes) --- */
+#contenedor-notificaciones {
     position: fixed;
     top: 25px;
     left: 50%;
@@ -861,9 +856,9 @@ form input:focus,
     /* Permite clicks a través del contenedor vacío */
 }
 
-.toast-cliente {
+.notificacion-cliente {
     pointer-events: auto;
-    /* Permite clickear la cruz del toast */
+    /* Permite clickear la cruz de la notif */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -878,54 +873,54 @@ form input:focus,
     font-size: 0.95rem;
     font-weight: 500;
     line-height: 1.4;
-    animation: toastSlideIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    animation: notificacionDeslizarEntrada 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     transition: all 0.3s ease;
 }
 
-.toast-cliente.success {
+.notificacion-cliente.success {
     border-left: 6px solid #10b981;
 }
 
-.toast-cliente.success .toast-icon {
+.notificacion-cliente.success .notificacion-icono {
     color: #10b981;
     font-size: 1.2rem;
 }
 
-.toast-cliente.error {
+.notificacion-cliente.error {
     border-left: 6px solid #ef4444;
 }
 
-.toast-cliente.error .toast-icon {
+.notificacion-cliente.error .notificacion-icono {
     color: #ef4444;
     font-size: 1.2rem;
 }
 
-.toast-cliente.warning {
+.notificacion-cliente.warning {
     border-left: 6px solid #ff9f1c;
 }
 
-.toast-cliente.warning .toast-icon {
+.notificacion-cliente.warning .notificacion-icono {
     color: #ff9f1c;
     font-size: 1.2rem;
 }
 
-.toast-cliente.info {
+.notificacion-cliente.info {
     border-left: 6px solid #38bdf8;
 }
 
-.toast-cliente.info .toast-icon {
+.notificacion-cliente.info .notificacion-icono {
     color: #38bdf8;
     font-size: 1.2rem;
 }
 
-.toast-content {
+.notificacion-contenido {
     display: flex;
     align-items: center;
     gap: 12px;
     flex-grow: 1;
 }
 
-.toast-close-btn {
+.notificacion-boton-cerrar {
     background: none;
     border: none;
     color: #94a3b8;
@@ -936,16 +931,16 @@ form input:focus,
     transition: color 0.2s, transform 0.2s;
 }
 
-.toast-close-btn:hover {
+.notificacion-boton-cerrar:hover {
     color: #f8fafc;
     transform: scale(1.15);
 }
 
-.toast-descarga {
-    animation: toastFadeOut 0.3s ease forwards;
+.notificacion-desvanecer {
+    animation: notificacionDesvanecerSalida 0.3s ease forwards;
 }
 
-@keyframes toastSlideIn {
+@keyframes notificacionDeslizarEntrada {
     from {
         transform: translateY(-30px);
         opacity: 0;
@@ -957,7 +952,7 @@ form input:focus,
     }
 }
 
-@keyframes toastFadeOut {
+@keyframes notificacionDesvanecerSalida {
     from {
         transform: scale(1);
         opacity: 1;
@@ -966,5 +961,99 @@ form input:focus,
     to {
         transform: scale(0.9);
         opacity: 0;
+    }
+}
+
+/* Modal de Confirmación para Abandonar */
+.modal-confirmacion {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20000;
+    transition: opacity 0.3s ease;
+}
+
+.modal-contenido {
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 30px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    animation: modalEntrada 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-contenido h3 {
+    color: #ef4444;
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+}
+
+.modal-contenido p {
+    color: #cbd5e1;
+    font-size: 1rem;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.modal-botones {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn-confirmar-modal,
+.btn-cancelar-modal {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.btn-confirmar-modal {
+    background: #ef4444;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btn-confirmar-modal:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+}
+
+.btn-cancelar-modal {
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-cancelar-modal:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    transform: translateY(-2px);
+}
+
+@keyframes modalEntrada {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
     }
 }

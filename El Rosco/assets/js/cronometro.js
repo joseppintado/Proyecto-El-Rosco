@@ -1,6 +1,6 @@
 function actualizarVisualCronometro() {
-    let selectTiempo = document.getElementById('selectTiempo');
-    let segundosConfigurados = selectTiempo ? parseInt(selectTiempo.value) : 120;
+    let selectorTiempo = document.getElementById('selectorTiempo');
+    let segundosConfigurados = selectorTiempo ? parseInt(selectorTiempo.value) : 120;
 
     let t1 = document.getElementById('tiempo-restante-j1');
     let t2 = document.getElementById('tiempo-restante-j2');
@@ -35,8 +35,8 @@ function iniciarCronometro() {
         clearInterval(intervaloCronometro);
     }
 
-    let selectTiempo = document.getElementById('selectTiempo');
-    let segundosConfigurados = selectTiempo ? parseInt(selectTiempo.value) : 120;
+    let selectorTiempo = document.getElementById('selectorTiempo');
+    let segundosConfigurados = selectorTiempo ? parseInt(selectorTiempo.value) : 120;
 
     if (segundosConfigurados === 0) {
         let contenedorCrono = document.getElementById('contenedorCronometro');

@@ -20,7 +20,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'completo' => false
             ]);
         } else if (!isset($_SESSION['usuario_j2'])) {
-            // Validar que el Jugador 2 no sea el mismo que el Jugador 1
+            // Validamos que el Jugador 2 no sea el mismo que el Jugador 1
             if ($_SESSION['usuario_j1']->getNombreUsuario() === $usuario->getNombreUsuario()) {
                 echo json_encode([
                     'exito' => false,

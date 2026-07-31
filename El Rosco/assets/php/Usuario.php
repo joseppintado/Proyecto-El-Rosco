@@ -22,17 +22,17 @@ class Usuario {
     public static function registrarUsuario($nombre, $contrasena, $correo, $fechaNacimiento){
        $conexion = conexion::crearConexion();
        
-       //encriptar contraseña
+       //encriptación de contraseña
        $contrasenaEncriptada = password_hash($contrasena, PASSWORD_DEFAULT);
 
-       //insertar usuario
+       //insert de usuario
        $sql = "INSERT INTO usuarios (nombre_usuario, password_hash, email, fecha_nacimiento) VALUES (?,?,?,?)";
        $stmt = $conexion->prepare($sql);
        $stmt->bind_param("ssss", $nombre, $contrasenaEncriptada, $correo, $fechaNacimiento);
 
        $resultado = $stmt->execute();
 
-       //cerrar conexion
+       //cerramos conexion
        $stmt->close();
        $conexion->close();
 
@@ -43,7 +43,7 @@ class Usuario {
     public static function iniciarSesion($nombre, $contrasena){
        $conexion = conexion::crearConexion();
        
-       //buscar usuario
+       //búsqueda de usuario
        $sql = "SELECT * FROM usuarios WHERE nombre_usuario = ?";
        $stmt = $conexion->prepare($sql);
        $stmt->bind_param("s", $nombre);
@@ -51,13 +51,13 @@ class Usuario {
 
        $resultado = $stmt->get_result();
        if ($usuario = $resultado->fetch_assoc()){
-           //verificar contraseña
+           //verificación de contraseña
            if (password_verify($contrasena, $usuario['password_hash'])){
                return new Usuario($usuario['id_usuario'], $nombre);
            }
        }
 
-       //cerrar conexion
+       //cerramos conexion
        $conexion->close();
        return false;
     }

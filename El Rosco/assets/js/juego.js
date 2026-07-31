@@ -18,7 +18,7 @@ const abecedario = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('');
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Enlazar botón de iniciar partida
+    // Enlazamos botón de iniciar partida
     const btnIniciar = document.getElementById('btnIniciarPartida');
     if (btnIniciar) {
         btnIniciar.addEventListener('click', iniciarNuevaPartida);
@@ -27,22 +27,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAbandonar = document.getElementById('btnAbandonar');
     if (btnAbandonar) {
         btnAbandonar.addEventListener('click', () => {
-            if (confirm("¿Estás seguro de que deseas abandonar la partida?")) {
-                abandonarPartida();
+            const modal = document.getElementById('modalConfirmacion');
+            if (modal) {
+                modal.classList.remove('oculto');
             }
         });
     }
 
-    // Enlazar botones de estadísticas generales
+    const btnConfirmarAbandonar = document.getElementById('btnConfirmarAbandonar');
+    if (btnConfirmarAbandonar) {
+        btnConfirmarAbandonar.addEventListener('click', () => {
+            const modal = document.getElementById('modalConfirmacion');
+            if (modal) modal.classList.add('oculto');
+            abandonarPartida();
+        });
+    }
+
+    const btnCancelarAbandonar = document.getElementById('btnCancelarAbandonar');
+    if (btnCancelarAbandonar) {
+        btnCancelarAbandonar.addEventListener('click', () => {
+            const modal = document.getElementById('modalConfirmacion');
+            if (modal) modal.classList.add('oculto');
+        });
+    }
+
+    // Enlazamos botones de estadísticas generales
     const btnEstadisticas = document.getElementById('btnVerEstadisticasGenerales');
     if (btnEstadisticas) {
         btnEstadisticas.addEventListener('click', () => {
             let seccionEstadisticas = document.getElementById('seccionEstadisticasGenerales');
             if (seccionEstadisticas && !seccionEstadisticas.classList.contains('oculto')) {
-                return; // Si ya está visible, no hacer nada para evitar sobreescribir la pantalla previa
+                return; // Si ya está visible, no hacemos nada para evitar sobreescribir la pantalla
             }
 
-            // Encontrar cuál es la pantalla visible antes de ocultar (solo si pantallaPreviaEstadisticas no está ya establecida)
+            // Encontramos cuál es la pantalla visible antes de ocultar (solo si pantallaPreviaEstadisticas no está ya establecida)
             if (!pantallaPreviaEstadisticas) {
                 let seccionUsuarios = document.getElementById('seccionUsuarios');
                 let seccionConfiguracion = document.getElementById('configuracionJuego');
@@ -75,19 +93,41 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('seccionEstadisticasGenerales').classList.add('oculto');
             if (pantallaPreviaEstadisticas) {
                 document.getElementById(pantallaPreviaEstadisticas).classList.remove('oculto');
-                pantallaPreviaEstadisticas = null; // Restablecer para la próxima vez
+                pantallaPreviaEstadisticas = null; // Restablecemos para la próxima vez
             } else {
                 document.getElementById('seccionUsuarios').classList.remove('oculto');
             }
         });
     }
 
-    // Cargar el historial inicial
+    // Cargamos el historial inicial
     cargarHistorialPartidas();
 
     const btnSalirConfiguracion = document.getElementById('btnSalirJuegoConfiguracion');
     if (btnSalirConfiguracion) {
-        btnSalirConfiguracion.addEventListener('click', salirDelJuego);
+        btnSalirConfiguracion.addEventListener('click', () => {
+            const modal = document.getElementById('modalSalirJuego');
+            if (modal) {
+                modal.classList.remove('oculto');
+            }
+        });
+    }
+
+    const btnConfirmarSalir = document.getElementById('btnConfirmarSalir');
+    if (btnConfirmarSalir) {
+        btnConfirmarSalir.addEventListener('click', () => {
+            const modal = document.getElementById('modalSalirJuego');
+            if (modal) modal.classList.add('oculto');
+            salirDelJuego();
+        });
+    }
+
+    const btnCancelarSalir = document.getElementById('btnCancelarSalir');
+    if (btnCancelarSalir) {
+        btnCancelarSalir.addEventListener('click', () => {
+            const modal = document.getElementById('modalSalirJuego');
+            if (modal) modal.classList.add('oculto');
+        });
     }
 });
 
@@ -95,13 +135,13 @@ function salirDelJuego() {
     limpiarMensajesServidor();
     realizarPeticion('POST', 'El Rosco/assets/php/logout.php', '', function (respuesta) {
         if (respuesta.exito) {
-            // Limpiar campos de login
+            // Limpiamos campos de login
             let usuarioInicioSesion = document.getElementById('usuarioInicioSesion');
             let claveInicioSesion = document.getElementById('claveInicioSesion');
             if (usuarioInicioSesion) usuarioInicioSesion.value = '';
             if (claveInicioSesion) claveInicioSesion.value = '';
 
-            // Ocultar pantallas y mostrar login
+            // Ocultamos pantallas y mostramos login
             document.getElementById('contenedorJuego').classList.add('oculto');
             document.getElementById('configuracionJuego').classList.add('oculto');
             document.getElementById('seccionUsuarios').classList.remove('oculto');
@@ -113,7 +153,7 @@ function salirDelJuego() {
 }
 
 function cargarPalabrasDelRosco() {
-    let nivel = document.getElementById('selectNivel').value;
+    let nivel = document.getElementById('selectorNivel').value;
     console.log("Cargando palabras...");
 
     realizarPeticion('GET', 'El Rosco/assets/php/obtener_palabras.php', 'nivel=' + nivel + '&t=' + new Date().getTime(), function (palabras) {
@@ -129,7 +169,7 @@ function cargarPalabrasDelRosco() {
 
 function iniciarNuevaPartida() {
     limpiarMensajesServidor();
-    let nivel = document.getElementById('selectNivel').value;
+    let nivel = document.getElementById('selectorNivel').value;
     let parametros = `accion=iniciarPartida&nivel=${nivel}`;
 
     realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', parametros, function (respuesta) {
@@ -137,12 +177,12 @@ function iniciarNuevaPartida() {
             idPartidaActual = respuesta.idPartida;
             console.log("Partida iniciada, ID:", idPartidaActual);
 
-            // Almacenar nombres de jugadores y turno inicial
+            // Almacenamos nombres de jugadores y turno inicial
             nombreJ1 = respuesta.nombreJ1 || "Jugador 1";
             nombreJ2 = respuesta.nombreJ2 || "Jugador 2";
             turnoJugador = respuesta.jugadorInicial || 1;
 
-            // Actualizar etiquetas en la UI
+            // Actualizamos etiquetas en la UI
             let etiquetaJ1 = document.getElementById('etiqueta-jugador1');
             let etiquetaJ2 = document.getElementById('etiqueta-jugador2');
             if (etiquetaJ1) etiquetaJ1.textContent = nombreJ1;
@@ -170,23 +210,23 @@ function iniciarTablero(listaPalabras) {
     indiceLetraActual = { 1: 0, 2: 0 };
     tiempoUsado = { 1: 0, 2: 0 };
 
-    let selectTiempo = document.getElementById('selectTiempo');
-    let segundosConfigurados = selectTiempo ? parseInt(selectTiempo.value) : 120;
+    let selectorTiempo = document.getElementById('selectorTiempo');
+    let segundosConfigurados = selectorTiempo ? parseInt(selectorTiempo.value) : 120;
     tiempoRestante = { 1: segundosConfigurados, 2: segundosConfigurados };
 
-    // Mostrar el botón de abandonar
+    // Mostramos el botón de abandonar
     let btnAbandonar = document.getElementById('btnAbandonar');
     if (btnAbandonar) {
         btnAbandonar.classList.remove('oculto');
     }
 
-    // Cargar características en la Zona General
-    let selectNivel = document.getElementById('selectNivel');
-    let selectAyuda = document.getElementById('selectAyuda');
+    // Cargamos características en la Zona General
+    let selectorNivel = document.getElementById('selectorNivel');
+    let selectorAyuda = document.getElementById('selectorAyuda');
 
-    let textoNivel = selectNivel ? selectNivel.value.toUpperCase() : "MEDIA";
+    let textoNivel = selectorNivel ? selectorNivel.value.toUpperCase() : "MEDIA";
     let textoTiempo = segundosConfigurados === 0 ? "Sin límite" : `${segundosConfigurados}s`;
-    let textoAyuda = selectAyuda ? (selectAyuda.value === 'si' ? "Habilitada" : "Inhabilitada") : "Habilitada";
+    let textoAyuda = selectorAyuda ? (selectorAyuda.value === 'si' ? "Habilitada" : "Inhabilitada") : "Habilitada";
 
     document.getElementById('generalDificultad').textContent = textoNivel;
     document.getElementById('generalDuracion').textContent = textoTiempo;
@@ -199,7 +239,7 @@ function iniciarTablero(listaPalabras) {
     let nombreInicial = (turnoJugador === 1) ? nombreJ1 : nombreJ2;
     document.getElementById('generalJugadorInicial').textContent = nombreInicial;
 
-    // Actualizar marcadores en el DOM
+    // Actualizamos marcadores en el DOM
     document.getElementById('aciertos-j1').textContent = '0';
     document.getElementById('errores-j1').textContent = '0';
     document.getElementById('aciertos-j2').textContent = '0';
@@ -210,21 +250,21 @@ function iniciarTablero(listaPalabras) {
     zonaJ1.innerHTML = "";
     zonaJ2.innerHTML = "";
 
-    // Renderizar rosco del Jugador 1
-    abecedario.forEach((letra, index) => {
+    // Renderizamos rosco del Jugador 1
+    abecedario.forEach((letra, indice) => {
         let botonLetra = document.createElement('button');
         botonLetra.textContent = letra;
         botonLetra.classList.add("btn-letra");
-        botonLetra.classList.add(`pos-1-${index}`);
+        botonLetra.classList.add(`pos-1-${indice}`);
         zonaJ1.appendChild(botonLetra);
     });
 
-    // Renderizar rosco del Jugador 2
-    abecedario.forEach((letra, index) => {
+    // Renderizamos rosco del Jugador 2
+    abecedario.forEach((letra, indice) => {
         let botonLetra = document.createElement('button');
         botonLetra.textContent = letra;
         botonLetra.classList.add("btn-letra");
-        botonLetra.classList.add(`pos-2-${index}`);
+        botonLetra.classList.add(`pos-2-${indice}`);
         zonaJ2.appendChild(botonLetra);
     });
 
@@ -234,12 +274,12 @@ function iniciarTablero(listaPalabras) {
 }
 
 function presentarDefinicionActiva() {
-    // Limpiar resaltado previo de cualquier letra activa
+    // Limpiamos el resaltado previo de cualquier letra activa
     document.querySelectorAll('.btn-letra').forEach(b => b.classList.remove('letra-activa'));
 
     // Si el jugador de este turno no tiene tiempo, no puede jugar
-    let selectTiempo = document.getElementById('selectTiempo');
-    let segundosConfigurados = selectTiempo ? parseInt(selectTiempo.value) : 120;
+    let selectorTiempo = document.getElementById('selectorTiempo');
+    let segundosConfigurados = selectorTiempo ? parseInt(selectorTiempo.value) : 120;
 
     let tiempoAgotadoJ1 = (segundosConfigurados > 0 && tiempoRestante[1] <= 0);
     let tiempoAgotadoJ2 = (segundosConfigurados > 0 && tiempoRestante[2] <= 0);
@@ -252,7 +292,7 @@ function presentarDefinicionActiva() {
         return;
     }
 
-    // Si el turno actual está finalizado, cambiar al otro
+    // Si el turno actual está finalizado, cambiamos al otro
     if (turnoJugador === 1 && completoJ1) {
         turnoJugador = 2;
         actualizarVisualTurno();
@@ -266,7 +306,7 @@ function presentarDefinicionActiva() {
         return;
     }
 
-    // Verificar si el jugador del turno tiene letras pendientes, de lo contrario buscar en forma circular
+    // Verificamos si el jugador del turno tiene letras pendientes, de lo contrario buscamos en forma circular
     let indice = indiceLetraActual[turnoJugador];
     let encontrado = false;
     for (let i = 0; i < 27; i++) {
@@ -293,7 +333,7 @@ function presentarDefinicionActiva() {
         botonActivo.classList.add('letra-activa');
     }
 
-    // Cargar la definición en la card
+    // Cargar la definición en la targeta de def
     let desplazamiento = (turnoJugador === 1) ? 0 : 27;
     let palabra = palabrasJuego[indiceActivo + desplazamiento];
 
@@ -307,11 +347,11 @@ function cederTurno() {
         botonActivo.classList.remove('letra-activa');
     }
 
-    // Cambiar de turno si el otro jugador tiene letras pendientes
+    // Cambiamos de turno si el otro jugador tiene letras pendientes
     let siguienteJugador = (turnoJugador === 1) ? 2 : 1;
 
-    let selectTiempo = document.getElementById('selectTiempo');
-    let segundosConfigurados = selectTiempo ? parseInt(selectTiempo.value) : 120;
+    let selectorTiempo = document.getElementById('selectorTiempo');
+    let segundosConfigurados = selectorTiempo ? parseInt(selectorTiempo.value) : 120;
     let tiempoAgotadoSiguiente = (segundosConfigurados > 0 && tiempoRestante[siguienteJugador] <= 0);
     let siguienteFinalizado = palabrasContestadas[siguienteJugador].every(val => val === true) || tiempoAgotadoSiguiente;
 
@@ -324,8 +364,8 @@ function cederTurno() {
 }
 
 function actualizarVisualTurno() {
-    let panelJ1 = document.getElementById('panel-jugador1');
-    let panelJ2 = document.getElementById('panel-jugador2');
+    let panelJ1 = document.getElementById('recuadro-jugador1');
+    let panelJ2 = document.getElementById('recuadro-jugador2');
     let nombreActivo = document.getElementById('nombreJugadorActivo');
 
     if (turnoJugador === 1) {
@@ -341,25 +381,25 @@ function actualizarVisualTurno() {
     }
 }
 
-function mostrarDefinicion(palabra, indexRelativo, numJugador) {
+function mostrarDefinicion(palabra, indiceRelativo, numJugador) {
     if (numJugador !== turnoJugador) {
         return;
     }
 
     let zonaDefinicion = document.getElementById('zonaDefinicion');
 
-    let selectAyuda = document.getElementById('selectAyuda');
-    let ayudaHabilitada = selectAyuda ? selectAyuda.value === 'si' : true;
-    let ayudaHtml = ayudaHabilitada
+    let selectorAyuda = document.getElementById('selectorAyuda');
+    let ayudaHabilitada = selectorAyuda ? selectorAyuda.value === 'si' : true;
+    let htmlAyuda = ayudaHabilitada
         ? `<div class="ayuda-letras">Cantidad de letras: ${palabra.cantidad_letras}</div>`
         : ``;
 
     zonaDefinicion.innerHTML = `
-        <div class="card-definicion">
-            <h4 class="letra-indicador">Jugando letra: <span class="letra-resaltada">${abecedario[indexRelativo]}</span></h4>
+        <div class="tarjeta-definicion">
+            <h4 class="letra-indicador">Jugando letra: <span class="letra-resaltada">${abecedario[indiceRelativo]}</span></h4>
             <p><strong>Definición:</strong> ${palabra.definicion}</p>
-            ${ayudaHtml}
-            <input type="text" id="inputRespuesta" placeholder="Tu respuesta..." autocomplete="off">
+            ${htmlAyuda}
+            <input type="text" id="campoRespuesta" placeholder="Tu respuesta..." autocomplete="off">
             <div class="definicion-acciones">
                 <button id="btnEnviarRespuesta" class="btn-confirmar">Confirmar</button>
                 <button id="btnCederTurno" class="btn-ceder">Ceder Turno</button>
@@ -367,13 +407,13 @@ function mostrarDefinicion(palabra, indexRelativo, numJugador) {
         </div>
     `;
 
-    const campoRespuesta = document.getElementById('inputRespuesta');
+    const campoRespuesta = document.getElementById('campoRespuesta');
     campoRespuesta.focus();
 
     // Confirmar respuesta con botón
     document.getElementById('btnEnviarRespuesta').onclick = function () {
         let respuesta = campoRespuesta.value;
-        enviarRespuesta(idPartidaActual, palabra.id_palabra, respuesta, indexRelativo, numJugador);
+        enviarRespuesta(idPartidaActual, palabra.id_palabra, respuesta, indiceRelativo, numJugador);
     };
 
     // Ceder turno con botón
@@ -381,48 +421,48 @@ function mostrarDefinicion(palabra, indexRelativo, numJugador) {
         cederTurno();
     };
 
-    // Confirmar respuesta con tecla Enter
+    // Confirmación de respuesta con tecla Enter
     campoRespuesta.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             let respuesta = campoRespuesta.value;
-            enviarRespuesta(idPartidaActual, palabra.id_palabra, respuesta, indexRelativo, numJugador);
+            enviarRespuesta(idPartidaActual, palabra.id_palabra, respuesta, indiceRelativo, numJugador);
         }
     });
 }
 
-function enviarRespuesta(idJuego, idPalabra, respuesta, indexRelativo, numJugador) {
+function enviarRespuesta(idJuego, idPalabra, respuesta, indiceRelativo, numJugador) {
     let parametros = `accion=verificar&id_juego=${idJuego}&id_palabra=${idPalabra}&respuesta_usuario=${encodeURIComponent(respuesta)}&turno_activo=${numJugador}`;
 
     realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', parametros, function (resultado) {
         if (resultado.exito) {
             let datos = resultado.datos;
-            palabrasContestadas[numJugador][indexRelativo] = true;
+            palabrasContestadas[numJugador][indiceRelativo] = true;
 
-            let boton = document.querySelector(`.pos-${numJugador}-${indexRelativo}`);
+            let boton = document.querySelector(`.pos-${numJugador}-${indiceRelativo}`);
             if (boton) {
                 boton.classList.remove('letra-activa');
             }
 
-            let selectTiempo = document.getElementById('selectTiempo');
-            let segundosConfigurados = selectTiempo ? parseInt(selectTiempo.value) : 120;
+            let selectorTiempo = document.getElementById('selectorTiempo');
+            let segundosConfigurados = selectorTiempo ? parseInt(selectorTiempo.value) : 120;
 
             if (datos.es_correcta) {
                 if (boton) boton.classList.add("acierto");
                 aciertos[numJugador]++;
                 document.getElementById(`aciertos-j${numJugador}`).textContent = aciertos[numJugador];
 
-                mostrarNotificacionCliente("Letra " + abecedario[indexRelativo].toUpperCase() + ": Correcto", "success", 2000);
+                mostrarNotificacionCliente("Letra " + abecedario[indiceRelativo].toUpperCase() + ": Correcto", "success", 2000);
 
-                // Mantiene el turno, avanza al siguiente término del mismo jugador
+                // Mantiene el turno, avanza al siguiente del mismo jugador
                 indiceLetraActual[numJugador] = (indiceLetraActual[numJugador] + 1) % 27;
             } else {
                 if (boton) boton.classList.add("error");
                 errores[numJugador]++;
                 document.getElementById(`errores-j${numJugador}`).textContent = errores[numJugador];
 
-                mostrarNotificacionCliente("Letra " + abecedario[indexRelativo].toUpperCase() + ": Incorrecto. La palabra correcta era: " + datos.palabra_correcta, "error", 5000);
+                mostrarNotificacionCliente("Letra " + abecedario[indiceRelativo].toUpperCase() + ": Incorrecto. La palabra correcta era: " + datos.palabra_correcta, "error", 5000);
 
-                // Pierde el turno y avanza de término
+                // Pierde el turno y avanza a la siguiente letra
                 indiceLetraActual[numJugador] = (indiceLetraActual[numJugador] + 1) % 27;
 
                 // Alternar turno al otro jugador si no ha finalizado
@@ -453,7 +493,7 @@ function abandonarPartida() {
 function finalizarPartida(porTiempo, ganadorForzado = null) {
     clearInterval(intervaloCronometro);
 
-    // Ocultar el botón de abandonar al finalizar
+    // Ocultamos el botón de abandonar al finalizar
     let btnAbandonar = document.getElementById('btnAbandonar');
     if (btnAbandonar) {
         btnAbandonar.classList.add('oculto');
@@ -479,7 +519,7 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
             ganador = 2;
             mensajeFinal = `¡Fin de la partida! Ha ganado ${nombreJ2} con ${aciertos[2]} aciertos.`;
         } else {
-            // En caso de empate en aciertos, gana el que usó menos tiempo
+            // si hay empate en aciertos, gana el que usó menos tiempo
             if (tiempoUsado[1] < tiempoUsado[2]) {
                 ganador = 1;
                 mensajeFinal = `¡Fin de la partida! Empate en aciertos (${aciertos[1]}), pero gana ${nombreJ1} por usar menos tiempo (${tiempoUsado[1]}s vs ${tiempoUsado[2]}s).`;
@@ -487,7 +527,7 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
                 ganador = 2;
                 mensajeFinal = `¡Fin de la partida! Empate en aciertos (${aciertos[2]}), pero gana ${nombreJ2} por usar menos tiempo (${tiempoUsado[2]}s vs ${tiempoUsado[1]}s).`;
             } else {
-                ganador = 1; // Por defecto Jugador 1 en empate absoluto
+                ganador = null; // si hay empate absoluto, no hay ganador
                 mensajeFinal = `¡Fin de la partida! Empate absoluto en aciertos (${aciertos[1]}) y tiempo (${tiempoUsado[1]}s).`;
             }
         }
@@ -515,12 +555,12 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
     }
 
     document.getElementById('zonaDefinicion').innerHTML = `
-        <div class="card-definicion card-finalizada">
+        <div class="tarjeta-definicion tarjeta-finalizada">
             <h3>Partida Finalizada</h3>
             <p>${mensajeFinal}</p>
             <div class="definicion-acciones">
-                <button id="btnVolverAConfiguracion" class="btn-ayuda btn-volver-config">Jugar otra partida</button>
-                <button id="btnSalirJuegoFin" class="btn-abandonar btn-cerrar-fin">Salir del juego</button>
+                <button id="btnVolverAConfiguracion" class="btn-ayuda btn-volver-configuracion">Jugar otra partida</button>
+                <button id="btnSalirJuegoFin" class="btn-abandonar btn-cerrar-final">Cerrar sesión</button>
             </div>
         </div>
     `;
@@ -531,10 +571,15 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
         document.getElementById('zonaDefinicion').innerHTML = "";
     };
 
-    document.getElementById('btnSalirJuegoFin').onclick = salirDelJuego;
+    document.getElementById('btnSalirJuegoFin').onclick = function () {
+        const modal = document.getElementById('modalSalirJuego');
+        if (modal) {
+            modal.classList.remove('oculto');
+        }
+    };
 
-    document.getElementById('panel-jugador1').classList.remove('jugador-activo');
-    document.getElementById('panel-jugador2').classList.remove('jugador-activo');
+    document.getElementById('recuadro-jugador1').classList.remove('jugador-activo');
+    document.getElementById('recuadro-jugador2').classList.remove('jugador-activo');
 }
 
 function cargarHistorialPartidas() {
@@ -552,11 +597,11 @@ function cargarHistorialPartidas() {
 
             let html = "<ul class='historial-lista'>";
             partidas.forEach(p => {
-                let ganadorText = p.ganador ? `<strong class='ganador-destacado'>${p.ganador}</strong>` : "<span class='ganador-local'>Ninguno (Local)</span>";
+                let textoGanador = p.ganador ? `<strong class='ganador-destacado'>${p.ganador}</strong>` : "<span class='ganador-local'>Ninguno (Local)</span>";
                 html += `<li class='historial-item'>
                     <strong>Partida #${p.id_juego}</strong><br>
                     Fecha: ${p.fecha_inicio}<br>
-                    Ganador: ${ganadorText}
+                    Ganador: ${textoGanador}
                 </li>`;
             });
             html += "</ul>";

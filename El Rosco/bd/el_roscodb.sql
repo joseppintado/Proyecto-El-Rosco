@@ -37,7 +37,7 @@ CREATE TABLE usuarios_juego (
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- tabla de Ganadores
+-- tabla de ganadores
 CREATE TABLE ganadores_juego (
     id_juego INT UNSIGNED NOT NULL,
     id_usuario INT UNSIGNED NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE ganadores_juego (
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- tabla intermedia de resultados de partida
+-- tabla de resultados de partida
 CREATE TABLE resultados_partida (
     id_resultado INT UNSIGNED NOT NULL AUTO_INCREMENT,
     id_partida INT UNSIGNED NOT NULL,

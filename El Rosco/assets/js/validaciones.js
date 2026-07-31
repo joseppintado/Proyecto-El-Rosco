@@ -1,16 +1,16 @@
 const Validador = {
-    // Validar formato de contraseña (ej: 1 mayúscula, 1 número, 1 especial)
+    // Validamos el formato de la contraseña (ej: 1 mayúscula, 1 número, 1 carácter especial y tener al menos 8 caracteres)
     esContrasenaSegura: function (contrasena) {
         const regex = /^(?=.*[0-9])(?=.*[A-Z])(?=.*[!@#$%^&*])(?=.{8,})/;
         return regex.test(contrasena);
     },
 
-    // Validar campos vacíos
+    // Validamos si los campos están vacíos
     estaVacio: function (valor) {
         return valor.trim() === "";
     },
 
-    // Validar formato de email
+    // Validamos el formato del correo
     esCorreoValido: function (correo) {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(correo);

@@ -4,12 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const formRegistro = document.getElementById('formularioRegistro');
 
     if (btnAlternar && formularioInicioSesion && formRegistro) {
-        // Toggle entre formulario de login y registro
+        // alternador entre formulario de login y registro
         btnAlternar.addEventListener('click', () => {
             formularioInicioSesion.classList.toggle('oculto');
             formRegistro.classList.toggle('oculto');
 
-            // Limpiar mensajes previos del servidor al alternar formularios
+            // limpiar mensajes previos del servidor al alternar formularios
             limpiarMensajesServidor();
 
             btnAlternar.textContent = formularioInicioSesion.classList.contains('oculto')
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('configuracionJuego').classList.remove('oculto');
                         document.getElementById('contenedorJuego').classList.add('oculto');
                     } else {
-                        // Limpiar formulario y pasar a Jugador 2
+                        // Limpiamos formulario y pasamos a Jugador 2
                         document.getElementById('usuarioInicioSesion').value = '';
                         document.getElementById('claveInicioSesion').value = '';
                         const titulo = document.getElementById('tituloInicioSesion');
@@ -88,14 +88,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Verificar si ya hay una sesión activa al cargar la página
+    // Verificamos si ya hay una sesión activa al cargar la página
     realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', 'accion=verificarSesion', function (respuesta) {
         if (respuesta.exito) {
-            // Si la sesión está activa, mostrar configuración directamente
+            // Si la sesión está activa, mostramos configuración directamente
             document.getElementById('seccionUsuarios').classList.add('oculto');
             document.getElementById('configuracionJuego').classList.remove('oculto');
         } else {
-            // Si no está activa, forzar inicio de sesión correspondiente
+            // Si no está activa, forzamos inicio de sesión correspondiente
             document.getElementById('seccionUsuarios').classList.remove('oculto');
             document.getElementById('configuracionJuego').classList.add('oculto');
             const titulo = document.getElementById('tituloInicioSesion');

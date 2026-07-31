@@ -5,16 +5,16 @@ header('Content-Type: application/json; charset=utf-8');
 
 $conexion = conexion::crearConexion();
 
-// Helper to execute simple query and fetch all rows
+// Función auxiliar para ejecutar una consulta simple y obtener todas las filas
 $obtenerResultadosConsulta = function($sql) use ($conexion) {
-    $result = $conexion->query($sql);
-    $rows = [];
-    if ($result) {
-        while ($row = $result->fetch_assoc()) {
-            $rows[] = $row;
+    $resultado = $conexion->query($sql);
+    $filas = [];
+    if ($resultado) {
+        while ($fila = $resultado->fetch_assoc()) {
+            $filas[] = $fila;
         }
     }
-    return $rows;
+    return $filas;
 };
 
 // 1. Ganadores General
@@ -40,13 +40,13 @@ $obtenerGanadoresPorDificultad = function($nivel) use ($conexion) {
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param("s", $nivel);
     $stmt->execute();
-    $res = $stmt->get_result();
-    $list = [];
-    while ($row = $res->fetch_assoc()) {
-        $list[] = $row;
+    $resultado = $stmt->get_result();
+    $lista = [];
+    while ($fila = $resultado->fetch_assoc()) {
+        $lista[] = $fila;
     }
     $stmt->close();
-    return $list;
+    return $lista;
 };
 
 $ganadoresBaja = $obtenerGanadoresPorDificultad('baja');

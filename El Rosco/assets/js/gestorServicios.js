@@ -9,10 +9,18 @@
 function realizarPeticion(metodo, url, parametros, funcionCallback) {
     let peticion = new XMLHttpRequest();
     peticion.onreadystatechange = function () {
-        if (peticion.readyState === 4 && peticion.status === 200) {
-            //Convertimos el JSON de respuesta en objeto JS
-            let respuesta = JSON.parse(peticion.responseText);
-            funcionCallback(respuesta);
+        if (peticion.readyState === 4) {
+            if (peticion.status === 200) {
+                try {
+                    let respuesta = JSON.parse(peticion.responseText);
+                    funcionCallback(respuesta);
+                } catch (e) {
+                    console.error("Error al parsear JSON:", e, peticion.responseText);
+                    alert("Error en el servidor: respuesta no válida. Asegúrese de que el servidor MySQL esté activo en XAMPP.");
+                }
+            } else {
+                alert("Error de conexión: no se pudo establecer comunicación con el servidor (Estado " + peticion.status + ").");
+            }
         }
     };
 

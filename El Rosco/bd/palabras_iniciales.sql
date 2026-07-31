@@ -3,7 +3,7 @@ USE el_roscodb;
 TRUNCATE TABLE palabras;
 
 -- ==========================================
--- NIVEL: BAJA (75 palabras)
+-- nivel baja 75 palabras
 -- ==========================================
 INSERT INTO palabras (termino, definicion, nivel, cantidad_letras) VALUES ('agua', 'Líquido transparente, inodoro e insípido indispensable para la vida.', 'baja', 4);
 INSERT INTO palabras (termino, definicion, nivel, cantidad_letras) VALUES ('arbol', 'Planta de tronco leñoso que se ramifica a cierta altura del suelo.', 'baja', 5);
@@ -82,7 +82,7 @@ INSERT INTO palabras (termino, definicion, nivel, cantidad_letras) VALUES ('zana
 INSERT INTO palabras (termino, definicion, nivel, cantidad_letras) VALUES ('zumo', 'Líquido extraído de las frutas o plantas por presión o cocción.', 'baja', 4);
 
 -- ==========================================
--- NIVEL: MEDIA (75 palabras)
+-- nivel media 75 palabras
 -- ==========================================
 INSERT INTO palabras (termino, definicion, nivel, cantidad_letras) VALUES ('almuerzo', 'Comida del mediodía que se toma después del desayuno.', 'media', 8);
 INSERT INTO palabras (termino, definicion, nivel, cantidad_letras) VALUES ('arena', 'Conjunto de partículas de rocas disgregadas en la playa o desierto.', 'media', 5);
@@ -161,7 +161,7 @@ INSERT INTO palabras (termino, definicion, nivel, cantidad_letras) VALUES ('zool
 INSERT INTO palabras (termino, definicion, nivel, cantidad_letras) VALUES ('zanco', 'Palo largo con soporte para los pies que sirve para caminar elevado.', 'media', 5);
 
 -- ==========================================
--- NIVEL: ALTA (75 palabras)
+-- nivel alta 75 palabras
 -- ==========================================
 INSERT INTO palabras (termino, definicion, nivel, cantidad_letras) VALUES ('algoritmo', 'Conjunto de instrucciones ordenadas para resolver un problema de forma lógica.', 'alta', 9);
 INSERT INTO palabras (termino, definicion, nivel, cantidad_letras) VALUES ('acustica', 'Parte de la física que estudia la propagación del sonido.', 'alta', 8);

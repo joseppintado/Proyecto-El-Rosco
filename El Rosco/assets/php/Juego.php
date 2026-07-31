@@ -53,19 +53,19 @@ class Juego {
           $stmt = $conexion->prepare($sql);
           $stmt->bind_param("s", $nivel);
           $stmt->execute();
-          $result = $stmt->get_result();
+          $resultado = $stmt->get_result();
           
           $letradas = [];
-          while ($row = $result->fetch_assoc()) {
-              $letradas[] = $row;
+          while ($fila = $resultado->fetch_assoc()) {
+              $letradas[] = $fila;
           }
           $stmt->close();
           
-          // Respaldo parcial en caso de que falten palabras para esa letra
+          // Respaldo en caso de que falten palabras para esa letra y se rompa el juego
           if (count($letradas) < 2) {
               $idsExcluidos = [];
-              foreach ($letradas as $l) {
-                  $idsExcluidos[] = $l['id_palabra'];
+              foreach ($letradas as $palabra) {
+                  $idsExcluidos[] = $palabra['id_palabra'];
               }
               $sqlExclusiones = "";
               if (!empty($idsExcluidos)) {
@@ -74,27 +74,27 @@ class Juego {
               
               $necesitadas = 2 - count($letradas);
               
-              // 1. Intentar buscar palabras que CONTIENEN la letra actual (LOWER(termino) LIKE '%letra%')
+              // 1. Intentamos buscar palabras que contienen la letra actual 
               $sqlRespaldo = "SELECT id_palabra, termino, definicion, cantidad_letras 
                               FROM palabras 
                               WHERE nivel = ? AND LOWER(termino) LIKE ? $sqlExclusiones 
                               ORDER BY RAND() 
                               LIMIT $necesitadas";
               $stmtRespaldo = $conexion->prepare($sqlRespaldo);
-              $likeParam = "%" . strtolower($letra) . "%";
-              $stmtRespaldo->bind_param("ss", $nivel, $likeParam);
+              $parametroLike = "%" . strtolower($letra) . "%";
+              $stmtRespaldo->bind_param("ss", $nivel, $parametroLike);
               $stmtRespaldo->execute();
               $resultadoRespaldo = $stmtRespaldo->get_result();
-              while ($row = $resultadoRespaldo->fetch_assoc()) {
-                  $letradas[] = $row;
+              while ($fila = $resultadoRespaldo->fetch_assoc()) {
+                  $letradas[] = $fila;
               }
               $stmtRespaldo->close();
 
-              // 2. Si aún falta alguna palabra (caso extremo), buscar cualquier palabra aleatoria
+              // 2. Si aún falta alguna palabra (caso extremo), buscamos cualquier palabra aleatoria
               if (count($letradas) < 2) {
                   $idsExcluidos = [];
-                  foreach ($letradas as $l) {
-                      $idsExcluidos[] = $l['id_palabra'];
+                  foreach ($letradas as $palabra) {
+                      $idsExcluidos[] = $palabra['id_palabra'];
                   }
                   $sqlExclusiones = "";
                   if (!empty($idsExcluidos)) {
@@ -111,8 +111,8 @@ class Juego {
                   $stmtRespaldoAbsoluto->bind_param("s", $nivel);
                   $stmtRespaldoAbsoluto->execute();
                   $resultadoRespaldoAbsoluto = $stmtRespaldoAbsoluto->get_result();
-                  while ($row = $resultadoRespaldoAbsoluto->fetch_assoc()) {
-                      $letradas[] = $row;
+                  while ($fila = $resultadoRespaldoAbsoluto->fetch_assoc()) {
+                      $letradas[] = $fila;
                   }
                   $stmtRespaldoAbsoluto->close();
               }
@@ -143,7 +143,7 @@ class Juego {
    public static function verificarRespuesta($idJuego, $idUsuario, $idPalabra, $respuestaUsuario){
        $conexion = conexion::crearConexion();
 
-       // 1. Obtener la palabra correcta de la BD para comparar
+       // 1. Obtenemos la palabra correcta de la BD para comparar
        $sql = "SELECT termino FROM palabras WHERE id_palabra = ?";
        $stmt = $conexion->prepare($sql);
        $stmt->bind_param("i", $idPalabra);
@@ -159,7 +159,7 @@ class Juego {
 
        $palabraCorrecta = $fila['termino'];
 
-       // 2. Comparar (cuidando mayúsculas/acentos, quizá usando mb_strtolower)
+       // 2. Comparamos cuidando mayúsculas y acentos
        $normalizar = function($texto) {
            $texto = trim($texto);
            $texto = mb_strtolower($texto, 'UTF-8');
@@ -173,7 +173,7 @@ class Juego {
 
        $esCorrecto = ($palabraCorrectaNormalizada === $respuestaUsuarioNormalizada) ? 1 : 0;
 
-       // 3. Insertar el resultado en una tabla intermedia de 'resultados_partida'
+       // 3. Insertamos el resultado en una tabla intermedia de 'resultados_partida'
        $sqlInsercion = "INSERT INTO resultados_partida (id_partida, id_usuario, id_palabra, respuesta_usuario, es_correcta) VALUES (?, ?, ?, ?, ?)";
        $stmtInsercion = $conexion->prepare($sqlInsercion);
        $stmtInsercion->bind_param("iiisi", $idJuego, $idUsuario, $idPalabra, $respuestaUsuario, $esCorrecto);
@@ -182,34 +182,11 @@ class Juego {
 
        $conexion->close();
 
-       // 4. Retornar el resultado
+       // 4. Retornamos el resultado
        return [
            'es_correcta' => (bool)$esCorrecto,
            'palabra_correcta' => $palabraCorrecta
        ];
-   }
-
-   public static function obtenerUltimasPartidas() {
-       $conexion = conexion::crearConexion();
-       $sql = "SELECT j.id_juego, j.fecha_inicio, u.nombre_usuario AS ganador
-               FROM juegos j
-               LEFT JOIN ganadores_juego gj ON j.id_juego = gj.id_juego
-               LEFT JOIN usuarios u ON gj.id_usuario = u.id_usuario
-               ORDER BY j.fecha_inicio DESC
-               LIMIT 5";
-       
-       $stmt = $conexion->prepare($sql);
-       $stmt->execute();
-       $result = $stmt->get_result();
-       
-       $partidas = [];
-       while ($fila = $result->fetch_assoc()) {
-           $partidas[] = $fila;
-       }
-       
-       $stmt->close();
-       $conexion->close();
-       return $partidas;
    }
 
    public static function obtenerUltimasPartidasEntre($idJ1, $idJ2) {
@@ -229,10 +206,10 @@ class Juego {
        $stmt = $conexion->prepare($sql);
        $stmt->bind_param("ii", $idJ1, $idJ2);
        $stmt->execute();
-       $result = $stmt->get_result();
+       $resultado = $stmt->get_result();
        
        $partidas = [];
-       while ($fila = $result->fetch_assoc()) {
+       while ($fila = $resultado->fetch_assoc()) {
            $partidas[] = $fila;
        }
        
