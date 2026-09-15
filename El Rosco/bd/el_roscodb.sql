@@ -1,3 +1,4 @@
+CREATE DATABASE IF NOT EXISTS el_roscodb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE el_roscodb;
 
 -- tabla de Usuarios
@@ -25,6 +26,7 @@ CREATE TABLE juegos (
     id_juego INT UNSIGNED NOT NULL AUTO_INCREMENT,
     fecha_inicio DATETIME NOT NULL,
     tamano_tablero INT NOT NULL,
+    nivel ENUM('baja', 'media', 'alta') NOT NULL DEFAULT 'media',
     PRIMARY KEY (id_juego)
 ) ENGINE=InnoDB;
 
@@ -41,6 +43,7 @@ CREATE TABLE usuarios_juego (
 CREATE TABLE ganadores_juego (
     id_juego INT UNSIGNED NOT NULL,
     id_usuario INT UNSIGNED NOT NULL,
+    tiempo_usado INT UNSIGNED NULL,
     PRIMARY KEY (id_juego, id_usuario),
     FOREIGN KEY (id_juego) REFERENCES juegos(id_juego) ON DELETE CASCADE,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE

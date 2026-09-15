@@ -1,6 +1,8 @@
 USE el_roscodb;
 
-TRUNCATE TABLE palabras;
+-- Limpiamos la tabla (usamos DELETE y no TRUNCATE porque 'palabras' es referenciada por una FK)
+DELETE FROM palabras;
+ALTER TABLE palabras AUTO_INCREMENT = 1;
 
 -- ==========================================
 -- nivel baja 75 palabras
