@@ -1057,3 +1057,74 @@ form input:focus,
         opacity: 1;
     }
 }
+
+/* ===== Guardar partida ===== */
+.acciones-partida {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.acciones-partida .btn-abandonar {
+    margin: 15px 0 25px 0;
+}
+
+.btn-guardar {
+    background: #3b82f6;
+    color: white;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 10px 24px;
+    border-radius: 30px;
+    margin: 15px 0 25px 0;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+}
+
+.btn-guardar:hover {
+    background: #2563eb;
+}
+
+
+/* ===== Partidas guardadas (pantalla de configuración) ===== */
+.seccion-partidas-guardadas {
+    margin: 20px 0;
+    text-align: left;
+}
+
+.seccion-partidas-guardadas h4 {
+    margin-bottom: 4px;
+}
+
+.ayuda-guardadas {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin-bottom: 10px;
+}
+
+.partida-guardada {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.btn-continuar {
+    background: #3b82f6;
+    color: white;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+.btn-continuar:hover {
+    background: #2563eb;
+}

@@ -34,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('seccionUsuarios').classList.add('oculto');
                         document.getElementById('configuracionJuego').classList.remove('oculto');
                         document.getElementById('contenedorJuego').classList.add('oculto');
+                        // con los dos jugadores logueados mostramos sus partidas guardadas
+                        cargarPartidasGuardadas();
                     } else {
                         // Limpiamos formulario y pasamos a Jugador 2
                         document.getElementById('usuarioInicioSesion').value = '';
@@ -64,6 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     mostrarNotificacionCliente("Todos los campos son obligatorios.", "error");
                     return;
                 }
+                if (!Validador.esNombreUsuarioValido(usuario)) {
+                    mostrarNotificacionCliente("El nombre de usuario debe tener entre 3 y 20 caracteres: solo letras, números o guion bajo.", "error");
+                    return;
+                }
                 if (!Validador.esContrasenaSegura(clave)) {
                     mostrarNotificacionCliente("La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, un número y un carácter especial.", "error");
                     return;
@@ -77,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let parametros = `nombreUsuario=${encodeURIComponent(usuario)}&contrasena=${encodeURIComponent(clave)}&correo=${encodeURIComponent(correo)}&fechaNacimiento=${encodeURIComponent(fechaNacimiento)}`;
             realizarPeticion('POST', 'El Rosco/assets/php/registro.php', parametros, function (respuesta) {
                 if (respuesta.exito) {
-                    mostrarMensajeServidor("registro exitoso, inicie secion", "success", "usuarios");
+                    mostrarMensajeServidor("Registro exitoso, inicie sesión.", "success", "usuarios");
                     formularioInicioSesion.classList.remove('oculto');
                     formRegistro.classList.add('oculto');
                     btnAlternar.textContent = "¿No tienes cuenta? Regístrate";
@@ -94,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Si la sesión está activa, mostramos configuración directamente
             document.getElementById('seccionUsuarios').classList.add('oculto');
             document.getElementById('configuracionJuego').classList.remove('oculto');
+            cargarPartidasGuardadas();
         } else {
             // Si no está activa, forzamos inicio de sesión correspondiente
             document.getElementById('seccionUsuarios').classList.remove('oculto');

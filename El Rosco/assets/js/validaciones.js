@@ -5,6 +5,12 @@ const Validador = {
         return regex.test(contrasena);
     },
 
+    // Validamos el nombre de usuario: 3 a 20 caracteres, solo letras, números o guion bajo
+    esNombreUsuarioValido: function (nombre) {
+        const regex = /^[A-Za-z0-9_]{3,20}$/;
+        return regex.test(nombre);
+    },
+
     // Validamos si los campos están vacíos
     estaVacio: function (valor) {
         return valor.trim() === "";

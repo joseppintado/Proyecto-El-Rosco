@@ -142,7 +142,7 @@ function renderizarTablaRanking(idContenedor, datos) {
         html += `<tr>
             <td class="posicion-numero">#${i + 1}</td>
             <td>${fila.nombre_usuario}</td>
-            <td><strong>${fila.victorias}</strong> victorias</td>
+            <td><strong>${fila.victorias}</strong> ${fila.victorias == 1 ? 'victoria' : 'victorias'}</td>
             <td>${textoPromedio}</td>
         </tr>`;
     });

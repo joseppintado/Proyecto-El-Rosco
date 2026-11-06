@@ -14,6 +14,8 @@ let tiempoUsado = { 1: 0, 2: 0 };
 let pantallaPreviaEstadisticas = null;
 let nombreJ1 = "Jugador 1";
 let nombreJ2 = "Jugador 2";
+let partidaEnCurso = false; // para no finalizar dos veces la misma partida
+let jugadorInicial = 1;
 const abecedario = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('');
 
 
@@ -40,6 +42,29 @@ document.addEventListener('DOMContentLoaded', () => {
             const modal = document.getElementById('modalConfirmacion');
             if (modal) modal.classList.add('oculto');
             abandonarPartida();
+        });
+    }
+
+    // Enlazamos botones de guardar partida
+    const btnGuardar = document.getElementById('btnGuardar');
+    if (btnGuardar) {
+        btnGuardar.addEventListener('click', () => {
+            document.getElementById('modalGuardar').classList.remove('oculto');
+        });
+    }
+
+    const btnConfirmarGuardar = document.getElementById('btnConfirmarGuardar');
+    if (btnConfirmarGuardar) {
+        btnConfirmarGuardar.addEventListener('click', () => {
+            document.getElementById('modalGuardar').classList.add('oculto');
+            guardarPartida();
+        });
+    }
+
+    const btnCancelarGuardar = document.getElementById('btnCancelarGuardar');
+    if (btnCancelarGuardar) {
+        btnCancelarGuardar.addEventListener('click', () => {
+            document.getElementById('modalGuardar').classList.add('oculto');
         });
     }
 
@@ -93,6 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('seccionEstadisticasGenerales').classList.add('oculto');
             if (pantallaPreviaEstadisticas) {
                 document.getElementById(pantallaPreviaEstadisticas).classList.remove('oculto');
+                if (pantallaPreviaEstadisticas === 'configuracionJuego') {
+                    cargarPartidasGuardadas();
+                }
                 pantallaPreviaEstadisticas = null; // Restablecemos para la próxima vez
             } else {
                 document.getElementById('seccionUsuarios').classList.remove('oculto');
@@ -152,17 +180,15 @@ function salirDelJuego() {
     });
 }
 
-function cargarPalabrasDelRosco() {
-    let nivel = document.getElementById('selectorNivel').value;
-    console.log("Cargando palabras...");
+// estadoGuardado es null en una partida nueva o el estado de la partida guardada al continuar
+function cargarPalabrasDelRosco(estadoGuardado = null) {
 
-    realizarPeticion('GET', 'El Rosco/assets/php/obtener_palabras.php', 'nivel=' + nivel + '&t=' + new Date().getTime(), function (palabras) {
-        if (palabras && palabras.length > 0) {
-            console.log("Palabras recibidas correctamente:", palabras);
-            iniciarTablero(palabras);
+    // las palabras ya las eligió el servidor, solo llegan la definición y la cantidad de letras
+    realizarPeticion('GET', 'El Rosco/assets/php/obtener_palabras.php', 't=' + new Date().getTime(), function (respuesta) {
+        if (respuesta.exito && respuesta.palabras.length === 54) {
+            iniciarTablero(respuesta.palabras, estadoGuardado);
         } else {
-            console.error("No se recibieron palabras.");
-            mostrarMensajeServidor("Error al cargar las palabras del juego.", "error", "juego");
+            mostrarMensajeServidor(respuesta.mensaje || "Error al cargar las palabras del juego.", "error", "juego");
         }
     });
 }
@@ -170,17 +196,19 @@ function cargarPalabrasDelRosco() {
 function iniciarNuevaPartida() {
     limpiarMensajesServidor();
     let nivel = document.getElementById('selectorNivel').value;
-    let parametros = `accion=iniciarPartida&nivel=${nivel}`;
+    let duracion = document.getElementById('selectorTiempo').value;
+    let ayuda = document.getElementById('selectorAyuda').value;
+    let parametros = `accion=iniciarPartida&nivel=${encodeURIComponent(nivel)}&duracion=${encodeURIComponent(duracion)}&ayuda=${encodeURIComponent(ayuda)}`;
 
     realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', parametros, function (respuesta) {
         if (respuesta.exito) {
             idPartidaActual = respuesta.idPartida;
-            console.log("Partida iniciada, ID:", idPartidaActual);
 
             // Almacenamos nombres de jugadores y turno inicial
             nombreJ1 = respuesta.nombreJ1 || "Jugador 1";
             nombreJ2 = respuesta.nombreJ2 || "Jugador 2";
             turnoJugador = respuesta.jugadorInicial || 1;
+            jugadorInicial = turnoJugador;
 
             // Actualizamos etiquetas en la UI
             let etiquetaJ1 = document.getElementById('etiqueta-jugador1');
@@ -199,7 +227,7 @@ function iniciarNuevaPartida() {
     });
 }
 
-function iniciarTablero(listaPalabras) {
+function iniciarTablero(listaPalabras, estadoGuardado = null) {
     palabrasJuego = listaPalabras;
     aciertos = { 1: 0, 2: 0 };
     errores = { 1: 0, 2: 0 };
@@ -209,16 +237,15 @@ function iniciarTablero(listaPalabras) {
     };
     indiceLetraActual = { 1: 0, 2: 0 };
     tiempoUsado = { 1: 0, 2: 0 };
+    partidaEnCurso = true;
 
     let selectorTiempo = document.getElementById('selectorTiempo');
     let segundosConfigurados = selectorTiempo ? parseInt(selectorTiempo.value) : 120;
     tiempoRestante = { 1: segundosConfigurados, 2: segundosConfigurados };
 
-    // Mostramos el botón de abandonar
-    let btnAbandonar = document.getElementById('btnAbandonar');
-    if (btnAbandonar) {
-        btnAbandonar.classList.remove('oculto');
-    }
+    // Mostramos los botones de abandonar y guardar
+    document.getElementById('btnAbandonar').classList.remove('oculto');
+    document.getElementById('btnGuardar').classList.remove('oculto');
 
     // Cargamos características en la Zona General
     let selectorNivel = document.getElementById('selectorNivel');
@@ -236,7 +263,7 @@ function iniciarTablero(listaPalabras) {
     cargarHistorialPartidas();
 
     // Cargar jugador inicial definido en el servidor
-    let nombreInicial = (turnoJugador === 1) ? nombreJ1 : nombreJ2;
+    let nombreInicial = (jugadorInicial === 1) ? nombreJ1 : nombreJ2;
     document.getElementById('generalJugadorInicial').textContent = nombreInicial;
 
     // Actualizamos marcadores en el DOM
@@ -268,9 +295,44 @@ function iniciarTablero(listaPalabras) {
         zonaJ2.appendChild(botonLetra);
     });
 
+    // si estamos continuando una partida guardada, dejamos el tablero como quedó
+    if (estadoGuardado !== null) {
+        restaurarEstado(estadoGuardado, segundosConfigurados);
+    }
+
     actualizarVisualTurno();
     iniciarCronometro();
     presentarDefinicionActiva();
+}
+
+// restauramos el estado guardado: letras, contadores, letra actual, tiempos y turno
+function restaurarEstado(estado, segundosConfigurados) {
+    [1, 2].forEach(numJugador => {
+        let datos = estado.jugadores[numJugador];
+
+        datos.letras.forEach(letra => {
+            palabrasContestadas[numJugador][letra.indice] = true;
+            let boton = document.querySelector(`.pos-${numJugador}-${letra.indice}`);
+            if (letra.es_correcta) {
+                aciertos[numJugador]++;
+                if (boton) boton.classList.add('acierto');
+            } else {
+                errores[numJugador]++;
+                if (boton) boton.classList.add('error');
+            }
+        });
+
+        document.getElementById(`aciertos-j${numJugador}`).textContent = aciertos[numJugador];
+        document.getElementById(`errores-j${numJugador}`).textContent = errores[numJugador];
+
+        indiceLetraActual[numJugador] = datos.indice;
+        tiempoUsado[numJugador] = datos.tiempo_usado;
+        if (segundosConfigurados > 0) {
+            tiempoRestante[numJugador] = Math.max(0, segundosConfigurados - datos.tiempo_usado);
+        }
+    });
+
+    turnoJugador = estado.turno;
 }
 
 function presentarDefinicionActiva() {
@@ -288,7 +350,7 @@ function presentarDefinicionActiva() {
     let completoJ2 = palabrasContestadas[2].every(val => val === true) || tiempoAgotadoJ2;
 
     if (completoJ1 && completoJ2) {
-        finalizarPartida(false);
+        finalizarPartida();
         return;
     }
 
@@ -413,7 +475,7 @@ function mostrarDefinicion(palabra, indiceRelativo, numJugador) {
     // Confirmar respuesta con botón
     document.getElementById('btnEnviarRespuesta').onclick = function () {
         let respuesta = campoRespuesta.value;
-        enviarRespuesta(idPartidaActual, palabra.id_palabra, respuesta, indiceRelativo, numJugador);
+        enviarRespuesta(respuesta, indiceRelativo, numJugador);
     };
 
     // Ceder turno con botón
@@ -425,13 +487,14 @@ function mostrarDefinicion(palabra, indiceRelativo, numJugador) {
     campoRespuesta.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             let respuesta = campoRespuesta.value;
-            enviarRespuesta(idPartidaActual, palabra.id_palabra, respuesta, indiceRelativo, numJugador);
+            enviarRespuesta(respuesta, indiceRelativo, numJugador);
         }
     });
 }
 
-function enviarRespuesta(idJuego, idPalabra, respuesta, indiceRelativo, numJugador) {
-    let parametros = `accion=verificar&id_juego=${idJuego}&id_palabra=${idPalabra}&respuesta_usuario=${encodeURIComponent(respuesta)}&turno_activo=${numJugador}`;
+function enviarRespuesta(respuesta, indiceRelativo, numJugador) {
+    // mandamos solo jugador y letra, la palabra la busca el servidor
+    let parametros = `accion=verificar&jugador=${numJugador}&indice=${indiceRelativo}&respuesta_usuario=${encodeURIComponent(respuesta)}`;
 
     realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', parametros, function (resultado) {
         if (resultado.exito) {
@@ -484,76 +547,108 @@ function enviarRespuesta(idJuego, idPalabra, respuesta, indiceRelativo, numJugad
     });
 }
 
-function abandonarPartida() {
-    let abandona = turnoJugador;
-    let ganador = (abandona === 1) ? 2 : 1;
-    finalizarPartida(false, ganador);
-}
+// mandamos el estado actual de la partida para guardarla
+function guardarPartida() {
+    if (!partidaEnCurso) return;
 
-function finalizarPartida(porTiempo, ganadorForzado = null) {
+    // Pausamos el cronómetro mientras se guarda
     clearInterval(intervaloCronometro);
 
-    // Ocultamos el botón de abandonar al finalizar
-    let btnAbandonar = document.getElementById('btnAbandonar');
-    if (btnAbandonar) {
-        btnAbandonar.classList.add('oculto');
-    }
+    let parametros = `accion=guardarPartida&turno=${turnoJugador}` +
+        `&indice_j1=${indiceLetraActual[1]}&indice_j2=${indiceLetraActual[2]}` +
+        `&tiempo_j1=${tiempoUsado[1]}&tiempo_j2=${tiempoUsado[2]}`;
+
+    realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', parametros, function (respuesta) {
+        if (respuesta.exito) {
+            partidaEnCurso = false;
+            document.getElementById('zonaDefinicion').innerHTML = "";
+            document.getElementById('recuadro-jugador1').classList.remove('jugador-activo');
+            document.getElementById('recuadro-jugador2').classList.remove('jugador-activo');
+
+            // Volvemos a la pantalla de configuración
+            document.getElementById('contenedorJuego').classList.add('oculto');
+            document.getElementById('configuracionJuego').classList.remove('oculto');
+            mostrarMensajeServidor("Partida guardada. Pueden retomarla hasta el " + respuesta.fechaLimite + ".", "success", "configuracion");
+            cargarPartidasGuardadas();
+        } else {
+            // si no se pudo guardar seguimos jugando
+            mostrarNotificacionCliente("Error al guardar la partida: " + respuesta.mensaje, "error", 5000);
+            iniciarCronometro();
+        }
+    });
+}
+
+function abandonarPartida() {
+    // abandona el jugador que tiene el turno
+    finalizarPartida('abandono', turnoJugador);
+}
+
+// motivo puede ser 'completo', 'tiempo' o 'abandono', si no viene lo deducimos
+// el ganador lo calcula el servidor, acá solo armamos el mensaje
+function finalizarPartida(motivo = null, abandona = 0) {
+    if (!partidaEnCurso) return;
+    partidaEnCurso = false;
+
+    clearInterval(intervaloCronometro);
+
+    // Ocultamos los botones de abandonar y guardar al finalizar
+    document.getElementById('btnAbandonar').classList.add('oculto');
+    document.getElementById('btnGuardar').classList.add('oculto');
 
     document.querySelectorAll('.btn-letra').forEach(b => {
         b.onclick = null;
     });
+    document.getElementById('recuadro-jugador1').classList.remove('jugador-activo');
+    document.getElementById('recuadro-jugador2').classList.remove('jugador-activo');
 
-    let ganador = null;
-    let mensajeFinal = "";
+    if (motivo === null) {
+        let selectorTiempo = document.getElementById('selectorTiempo');
+        let segundosConfigurados = selectorTiempo ? parseInt(selectorTiempo.value) : 120;
+        let algunoSinTiempo = segundosConfigurados > 0 && (tiempoRestante[1] <= 0 || tiempoRestante[2] <= 0);
+        motivo = algunoSinTiempo ? 'tiempo' : 'completo';
+    }
 
-    if (ganadorForzado !== null) {
-        ganador = ganadorForzado;
-        let nombrePerdedor = (ganador === 1) ? nombreJ2 : nombreJ1;
-        let nombreGanador = (ganador === 1) ? nombreJ1 : nombreJ2;
-        mensajeFinal = `¡Fin de la partida! ${nombrePerdedor} ha abandonado. Ha ganado ${nombreGanador}.`;
-    } else {
-        if (aciertos[1] > aciertos[2]) {
-            ganador = 1;
-            mensajeFinal = `¡Fin de la partida! Ha ganado ${nombreJ1} con ${aciertos[1]} aciertos.`;
-        } else if (aciertos[2] > aciertos[1]) {
-            ganador = 2;
-            mensajeFinal = `¡Fin de la partida! Ha ganado ${nombreJ2} con ${aciertos[2]} aciertos.`;
+    let parametros = `accion=finalizarPartida&motivo=${motivo}&abandona=${abandona}&tiempo_j1=${tiempoUsado[1]}&tiempo_j2=${tiempoUsado[2]}`;
+    realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', parametros, function (respuesta) {
+        if (respuesta.exito) {
+            let mensajeFinal = armarMensajeFinal(respuesta.motivo, respuesta.datos);
+            mostrarNotificacionCliente(mensajeFinal, "info", 6000);
+            mostrarTarjetaFinal(mensajeFinal);
         } else {
-            // si hay empate en aciertos, gana el que usó menos tiempo
-            if (tiempoUsado[1] < tiempoUsado[2]) {
-                ganador = 1;
-                mensajeFinal = `¡Fin de la partida! Empate en aciertos (${aciertos[1]}), pero gana ${nombreJ1} por usar menos tiempo (${tiempoUsado[1]}s vs ${tiempoUsado[2]}s).`;
-            } else if (tiempoUsado[2] < tiempoUsado[1]) {
-                ganador = 2;
-                mensajeFinal = `¡Fin de la partida! Empate en aciertos (${aciertos[2]}), pero gana ${nombreJ2} por usar menos tiempo (${tiempoUsado[2]}s vs ${tiempoUsado[1]}s).`;
-            } else {
-                ganador = null; // si hay empate absoluto, no hay ganador
-                mensajeFinal = `¡Fin de la partida! Empate absoluto en aciertos (${aciertos[1]}) y tiempo (${tiempoUsado[1]}s).`;
-            }
+            mostrarTarjetaFinal("No se pudo registrar el resultado de la partida: " + respuesta.mensaje);
         }
-    }
-
-    if (porTiempo) {
-        mensajeFinal = "¡Tiempo agotado! " + mensajeFinal;
-    }
-
-    mostrarNotificacionCliente(mensajeFinal, "info", 6000);
-
-    // Registrar en BD el ganador
-    if (ganador === 1 || ganador === 2) {
-        let parametros = `accion=registrarGanador&id_juego=${idPartidaActual}&id_ganador_jugador=${ganador}&tiempo_usado=${tiempoUsado[ganador]}`;
-        realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', parametros, function (respuesta) {
-            if (respuesta.exito) {
-                console.log("Ganador registrado correctamente");
-                cargarHistorialPartidas();
-            } else {
-                console.error("Error al registrar ganador:", respuesta.mensaje);
-            }
-        });
-    } else {
         cargarHistorialPartidas();
+    });
+}
+
+function armarMensajeFinal(motivo, datos) {
+    let g = datos.ganador;
+    let p = (g === 1) ? 2 : 1;
+    let nombres = { 1: nombreJ1, 2: nombreJ2 };
+    let mensaje = "";
+
+    switch (datos.criterio) {
+        case 'abandono':
+            mensaje = `${nombres[p]} abandonó la partida. Ganó ${nombres[g]}.`;
+            break;
+        case 'aciertos':
+            mensaje = `Ganó ${nombres[g]} con ${datos.aciertos[g]} aciertos (contra ${datos.aciertos[p]}).`;
+            break;
+        case 'tiempo':
+            mensaje = `Empate en ${datos.aciertos[g]} aciertos. Ganó ${nombres[g]} por usar menos tiempo (${datos.tiempos[g]}s contra ${datos.tiempos[p]}s).`;
+            break;
+        case 'errores':
+            mensaje = `Empate en aciertos y en tiempo. Ganó ${nombres[g]} por tener menos errores (${datos.errores[g]} contra ${datos.errores[p]}).`;
+            break;
+        default:
+            mensaje = `Empate total en aciertos, tiempo y errores. Ganó ${nombres[g]} por sorteo.`;
     }
 
+    let prefijo = (motivo === 'tiempo') ? "¡Tiempo agotado! " : "";
+    return prefijo + "¡Fin de la partida! " + mensaje;
+}
+
+function mostrarTarjetaFinal(mensajeFinal) {
     document.getElementById('zonaDefinicion').innerHTML = `
         <div class="tarjeta-definicion tarjeta-finalizada">
             <h3>Partida Finalizada</h3>
@@ -569,6 +664,7 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
         document.getElementById('contenedorJuego').classList.add('oculto');
         document.getElementById('configuracionJuego').classList.remove('oculto');
         document.getElementById('zonaDefinicion').innerHTML = "";
+        cargarPartidasGuardadas();
     };
 
     document.getElementById('btnSalirJuegoFin').onclick = function () {
@@ -577,9 +673,74 @@ function finalizarPartida(porTiempo, ganadorForzado = null) {
             modal.classList.remove('oculto');
         }
     };
+}
 
-    document.getElementById('recuadro-jugador1').classList.remove('jugador-activo');
-    document.getElementById('recuadro-jugador2').classList.remove('jugador-activo');
+// pedimos las partidas guardadas de los dos jugadores y las mostramos en la configuración
+function cargarPartidasGuardadas() {
+    realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', 'accion=obtenerPartidasGuardadas', function (respuesta) {
+        let seccion = document.getElementById('seccionPartidasGuardadas');
+        let lista = document.getElementById('listaPartidasGuardadas');
+
+        if (!respuesta.exito || respuesta.partidas.length === 0) {
+            // si no hay partidas guardadas ocultamos la sección
+            seccion.classList.add('oculto');
+            lista.innerHTML = "";
+            return;
+        }
+
+        let html = "";
+        respuesta.partidas.forEach(p => {
+            let textoDuracion = (p.duracion === 0) ? "Sin límite" : (p.duracion / 60) + " min";
+            let textoAyuda = (p.ayuda === 1) ? "con ayuda" : "sin ayuda";
+            html += `<div class="partida-guardada">
+                <div>
+                    <strong>Partida #${p.id_juego}</strong> (${p.nivel.toUpperCase()}, ${textoDuracion}, ${textoAyuda})<br>
+                    Aciertos: ${respuesta.nombreJ1} ${p.aciertos_j1} - ${p.aciertos_j2} ${respuesta.nombreJ2}<br>
+                    Guardada: ${p.fecha_guardado} · Vence: ${p.fecha_vencimiento}
+                </div>
+                <button class="btn-continuar" data-id="${p.id_juego}">Continuar</button>
+            </div>`;
+        });
+        lista.innerHTML = html;
+        seccion.classList.remove('oculto');
+
+        // Enlazamos cada botón Continuar con su partida
+        lista.querySelectorAll('.btn-continuar').forEach(boton => {
+            boton.addEventListener('click', () => {
+                continuarPartida(parseInt(boton.dataset.id));
+            });
+        });
+    });
+}
+
+// continuamos una partida guardada, el servidor la arma y nos devuelve su estado
+function continuarPartida(idJuego) {
+    limpiarMensajesServidor();
+    realizarPeticion('POST', 'El Rosco/assets/php/controladorJuego.php', 'accion=continuarPartida&id_juego=' + idJuego, function (respuesta) {
+        if (!respuesta.exito) {
+            mostrarMensajeServidor(respuesta.mensaje, "error", "configuracion");
+            cargarPartidasGuardadas(); // por si venció, actualizamos la lista
+            return;
+        }
+
+        idPartidaActual = respuesta.idPartida;
+        nombreJ1 = respuesta.nombreJ1;
+        nombreJ2 = respuesta.nombreJ2;
+        jugadorInicial = respuesta.jugadorInicial;
+        document.getElementById('etiqueta-jugador1').textContent = nombreJ1;
+        document.getElementById('etiqueta-jugador2').textContent = nombreJ2;
+
+        // cargamos las características de la partida en los selectores porque el juego las lee de ahí
+        document.getElementById('selectorNivel').value = respuesta.nivel;
+        document.getElementById('selectorTiempo').value = String(respuesta.duracion);
+        document.getElementById('selectorAyuda').value = respuesta.ayuda;
+
+        document.getElementById('configuracionJuego').classList.add('oculto');
+        document.getElementById('contenedorJuego').classList.remove('oculto');
+
+        mostrarNotificacionCliente("Partida #" + idJuego + " retomada. ¡A seguir jugando!", "success", 3000);
+        cargarPalabrasDelRosco(respuesta);
+    });
 }
 
 function cargarHistorialPartidas() {
@@ -595,13 +756,15 @@ function cargarHistorialPartidas() {
                 return;
             }
 
+            let motivos = { completo: 'Roscos completos', tiempo: 'Tiempo agotado', abandono: 'Abandono', vencida: 'Guardada y vencida (10 días)' };
             let html = "<ul class='historial-lista'>";
             partidas.forEach(p => {
-                let textoGanador = p.ganador ? `<strong class='ganador-destacado'>${p.ganador}</strong>` : "<span class='ganador-local'>Ninguno (Local)</span>";
                 html += `<li class='historial-item'>
-                    <strong>Partida #${p.id_juego}</strong><br>
+                    <strong>Partida #${p.id_juego}</strong> (${p.nivel.toUpperCase()})<br>
                     Fecha: ${p.fecha_inicio}<br>
-                    Ganador: ${textoGanador}
+                    Aciertos: ${respuesta.nombreJ1} ${p.aciertos_j1} - ${p.aciertos_j2} ${respuesta.nombreJ2}<br>
+                    Fin: ${motivos[p.motivo_fin] || '-'}<br>
+                    Ganador: <strong class='ganador-destacado'>${p.ganador}</strong>
                 </li>`;
             });
             html += "</ul>";

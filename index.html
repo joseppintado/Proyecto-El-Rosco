@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="El Rosco/assets/css/estilos.css?v=12">
+    <link rel="stylesheet" href="El Rosco/assets/css/estilos.css?v=14">
     <title>El Rosco</title>
 </head>
 
@@ -72,6 +72,13 @@
                 </select>
             </div>
 
+            <!-- partidas guardadas para continuar -->
+            <div id="seccionPartidasGuardadas" class="seccion-partidas-guardadas oculto">
+                <h4>Partidas guardadas</h4>
+                <p class="ayuda-guardadas">Pueden continuar una de estas partidas o comenzar una nueva con las opciones de arriba.</p>
+                <div id="listaPartidasGuardadas"></div>
+            </div>
+
             <button id="btnIniciarPartida">¡Comenzar Partida!</button>
             <button id="btnSalirJuegoConfiguracion" class="btn-abandonar">Cerrar sesión</button>
         </section>
@@ -102,7 +109,10 @@
                         <div id="listaUltimasPartidas" class="lista-ultimas-partidas">Cargando...</div>
                     </div>
                 </div>
-                <button id="btnAbandonar" class="btn-abandonar">Abandonar Partida</button>
+                <div class="acciones-partida">
+                    <button id="btnGuardar" class="btn-guardar">Guardar Partida</button>
+                    <button id="btnAbandonar" class="btn-abandonar">Abandonar Partida</button>
+                </div>
             </div>
 
             <!-- Zonas de Jugadores -->
@@ -179,6 +189,19 @@
         </div>
     </div>
 
+    <!-- modal de confirmación para guardar la partida -->
+    <div id="modalGuardar" class="modal-confirmacion oculto">
+        <div class="modal-contenido">
+            <h3>¿Guardar Partida?</h3>
+            <p>La partida quedará guardada tal como está y podrán retomarla dentro de los próximos 10 días.
+                Pasado ese plazo se dará por finalizada. ¿Ambos jugadores están de acuerdo?</p>
+            <div class="modal-botones">
+                <button id="btnConfirmarGuardar" class="btn-confirmar-modal">Sí, guardar</button>
+                <button id="btnCancelarGuardar" class="btn-cancelar-modal">No, continuar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- modal de confirmación para salir del juego -->
     <div id="modalSalirJuego" class="modal-confirmacion oculto">
         <div class="modal-contenido">
@@ -193,13 +216,13 @@
 
     <div id="contenedor-notificaciones"></div>
 
-    <script src="El Rosco/assets/js/alertas.js?v=9"></script>
-    <script src="El Rosco/assets/js/gestorServicios.js?v=9"></script>
-    <script src="El Rosco/assets/js/validaciones.js?v=9"></script>
-    <script src="El Rosco/assets/js/juego.js?v=9"></script>
-    <script src="El Rosco/assets/js/cronometro.js?v=9"></script>
-    <script src="El Rosco/assets/js/estadisticas.js?v=9"></script>
-    <script src="El Rosco/assets/js/InicioSesion.js?v=9"></script>
+    <script src="El Rosco/assets/js/alertas.js?v=15"></script>
+    <script src="El Rosco/assets/js/gestorServicios.js?v=15"></script>
+    <script src="El Rosco/assets/js/validaciones.js?v=15"></script>
+    <script src="El Rosco/assets/js/juego.js?v=15"></script>
+    <script src="El Rosco/assets/js/cronometro.js?v=15"></script>
+    <script src="El Rosco/assets/js/estadisticas.js?v=15"></script>
+    <script src="El Rosco/assets/js/InicioSesion.js?v=15"></script>
     <footer>
         <p>Jose Pintado LyP 2026</p>
     </footer>

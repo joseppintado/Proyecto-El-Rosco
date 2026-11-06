@@ -20,12 +20,12 @@ class Usuario {
 
     //registro de usuarios
     public static function registrarUsuario($nombre, $contrasena, $correo, $fechaNacimiento){
-       $conexion = conexion::crearConexion();
-       
+       $conexion = Conexion::crearConexion();
+
        //encriptación de contraseña
        $contrasenaEncriptada = password_hash($contrasena, PASSWORD_DEFAULT);
 
-       //insert de usuario
+       //insert de usuario (si el nombre ya existe execute devuelve false)
        $sql = "INSERT INTO usuarios (nombre_usuario, password_hash, email, fecha_nacimiento) VALUES (?,?,?,?)";
        $stmt = $conexion->prepare($sql);
        $stmt->bind_param("ssss", $nombre, $contrasenaEncriptada, $correo, $fechaNacimiento);
@@ -41,24 +41,28 @@ class Usuario {
 
     //inicio de sesión
     public static function iniciarSesion($nombre, $contrasena){
-       $conexion = conexion::crearConexion();
-       
+       $conexion = Conexion::crearConexion();
+
        //búsqueda de usuario
-       $sql = "SELECT * FROM usuarios WHERE nombre_usuario = ?";
+       $sql = "SELECT id_usuario, nombre_usuario, password_hash FROM usuarios WHERE nombre_usuario = ?";
        $stmt = $conexion->prepare($sql);
        $stmt->bind_param("s", $nombre);
        $stmt->execute();
 
        $resultado = $stmt->get_result();
-       if ($usuario = $resultado->fetch_assoc()){
-           //verificación de contraseña
-           if (password_verify($contrasena, $usuario['password_hash'])){
-               return new Usuario($usuario['id_usuario'], $nombre);
-           }
+       $fila = $resultado->fetch_assoc();
+
+       //liberamos el resultado y cerramos conexion
+       $resultado->free();
+       $stmt->close();
+       $conexion->close();
+
+       //verificación de contraseña
+       if ($fila && password_verify($contrasena, $fila['password_hash'])){
+           return new Usuario($fila['id_usuario'], $fila['nombre_usuario']);
        }
 
-       //cerramos conexion
-       $conexion->close();
        return false;
     }
 }
+?>

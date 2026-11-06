@@ -1,9 +1,14 @@
 <?php
-require_once __DIR__ . '/conexion.php';
+require_once __DIR__ . '/Conexion.php';
+require_once __DIR__ . '/Juego.php';
+date_default_timezone_set('America/Argentina/Buenos_Aires');
 
 header('Content-Type: application/json; charset=utf-8');
 
-$conexion = conexion::crearConexion();
+// antes de calcular cerramos las partidas vencidas para que cuenten sus ganadores
+Juego::finalizarPartidasVencidas();
+
+$conexion = Conexion::crearConexion();
 
 // Función auxiliar para ejecutar una consulta simple y obtener todas las filas
 $obtenerResultadosConsulta = function($sql) use ($conexion) {
@@ -11,8 +16,11 @@ $obtenerResultadosConsulta = function($sql) use ($conexion) {
     $filas = [];
     if ($resultado) {
         while ($fila = $resultado->fetch_assoc()) {
+            // escapamos el nombre porque se muestra en el HTML
+            $fila['nombre_usuario'] = htmlspecialchars($fila['nombre_usuario'], ENT_QUOTES, 'UTF-8');
             $filas[] = $fila;
         }
+        $resultado->free();
     }
     return $filas;
 };
@@ -43,8 +51,10 @@ $obtenerGanadoresPorDificultad = function($nivel) use ($conexion) {
     $resultado = $stmt->get_result();
     $lista = [];
     while ($fila = $resultado->fetch_assoc()) {
+        $fila['nombre_usuario'] = htmlspecialchars($fila['nombre_usuario'], ENT_QUOTES, 'UTF-8');
         $lista[] = $fila;
     }
+    $resultado->free();
     $stmt->close();
     return $lista;
 };

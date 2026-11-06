@@ -75,7 +75,7 @@ function iniciarCronometro() {
                     actualizarVisualTurno();
                     presentarDefinicionActiva();
                 } else {
-                    finalizarPartida(false);
+                    finalizarPartida();
                 }
             }
         }
