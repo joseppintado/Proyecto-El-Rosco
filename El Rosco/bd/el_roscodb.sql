@@ -1,3 +1,6 @@
+-- usamos utf8mb4 para que las tildes y la ñ se guarden bien sin importar la configuración del cliente
+SET NAMES utf8mb4;
+
 CREATE DATABASE IF NOT EXISTS el_roscodb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE el_roscodb;
 

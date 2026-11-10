@@ -1,3 +1,6 @@
+-- usamos utf8mb4 para que las tildes y la ñ se guarden bien sin importar la configuración del cliente
+SET NAMES utf8mb4;
+
 USE el_roscodb;
 
 -- Limpiamos la tabla (usamos DELETE y no TRUNCATE porque 'palabras' es referenciada por una FK)

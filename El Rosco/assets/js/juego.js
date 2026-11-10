@@ -169,6 +169,10 @@ function salirDelJuego() {
             if (usuarioInicioSesion) usuarioInicioSesion.value = '';
             if (claveInicioSesion) claveInicioSesion.value = '';
 
+            // el próximo en iniciar sesión vuelve a ser el Jugador 1
+            const titulo = document.getElementById('tituloInicioSesion');
+            if (titulo) titulo.textContent = "Acceso al Juego - Jugador 1";
+
             // Ocultamos pantallas y mostramos login
             document.getElementById('contenedorJuego').classList.add('oculto');
             document.getElementById('configuracionJuego').classList.add('oculto');

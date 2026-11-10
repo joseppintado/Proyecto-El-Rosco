@@ -39,6 +39,26 @@ class Usuario {
        return $resultado;
     }
 
+    //verificamos si el nombre de usuario ya está registrado
+    public static function existeNombreUsuario($nombre){
+       $conexion = Conexion::crearConexion();
+
+       $sql = "SELECT id_usuario FROM usuarios WHERE nombre_usuario = ?";
+       $stmt = $conexion->prepare($sql);
+       $stmt->bind_param("s", $nombre);
+       $stmt->execute();
+
+       $resultado = $stmt->get_result();
+       $existe = ($resultado->num_rows > 0);
+
+       //liberamos el resultado y cerramos conexion
+       $resultado->free();
+       $stmt->close();
+       $conexion->close();
+
+       return $existe;
+    }
+
     //inicio de sesión
     public static function iniciarSesion($nombre, $contrasena){
        $conexion = Conexion::crearConexion();

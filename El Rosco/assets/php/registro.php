@@ -41,10 +41,16 @@ if($_SERVER['REQUEST_METHOD'] === 'POST') {
         responder(false, 'La fecha de nacimiento no es válida');
     }
 
+    // Validamos que el nombre de usuario no esté registrado
+    if (Usuario::existeNombreUsuario($nombre)) {
+        responder(false, 'El nombre de usuario ya existe');
+    }
+
+    // si igual falla el insert (por ejemplo, otro usuario se registró con el mismo nombre al mismo tiempo) lo controla la UNIQUE de la base
     if(Usuario::registrarUsuario($nombre, $contrasena, $correo, $fechaNacimiento)){
         responder(true, 'Usuario registrado correctamente');
     }else{
-        responder(false, 'El nombre de usuario ya existe');
+        responder(false, 'No se pudo registrar el usuario. Intente nuevamente.');
     }
 }
 ?>

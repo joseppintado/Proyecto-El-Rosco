@@ -43,6 +43,8 @@ function iniciarCronometro() {
         if (contenedorCrono) {
             contenedorCrono.classList.add('oculto');
         }
+        // mostramos "Sin límite" así no queda el tiempo de la partida anterior
+        actualizarVisualCronometro();
         intervaloCronometro = setInterval(() => {
             tiempoUsado[turnoJugador]++;
         }, 1000);
